@@ -16,11 +16,11 @@ public class NguoiDungService {
     private NguoiDungRepository nguoiDungRepository;
 
     public NguoiDung createNguoiDung(NguoiDungCreationRequest request){
+        NguoiDung nguoiDung = new NguoiDung();
+
         if(nguoiDungRepository.existsByEmail(request.getEmail())){
             throw new RuntimeException("Email này đã tồn tại.");
         }
-        NguoiDung nguoiDung = new NguoiDung();
-
         nguoiDung.setHoTen(request.getHoTen());
         nguoiDung.setEmail(request.getEmail());
         nguoiDung.setMatKhau(request.getMatKhau());
@@ -33,7 +33,7 @@ public class NguoiDungService {
         NguoiDung nguoiDung = getNguoiDung(MaNguoiDung);
 
         // Kiểm tra xem email có thay đổi hay không
-        if (request.getEmail() != null && !nguoiDung.getEmail().equals(request.getEmail())) {
+        if (request.getEmail() != null && !request.getEmail().trim().isEmpty() && !nguoiDung.getEmail().equals(request.getEmail())) {
             // Nếu email thay đổi, kiểm tra xem email mới đã tồn tại chưa
             if (nguoiDungRepository.existsByEmail(request.getEmail())) {
                 throw new RuntimeException("Email này đã tồn tại.");
