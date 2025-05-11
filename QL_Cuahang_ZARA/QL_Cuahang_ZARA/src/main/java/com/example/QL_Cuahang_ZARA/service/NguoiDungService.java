@@ -29,7 +29,7 @@ public class NguoiDungService {
     }
 
         // update user
-    public NguoiDung updateNguoiDung(Long MaNguoiDung, NguoiDungUpdateRequest request){
+    public NguoiDung updateNguoiDung(Integer MaNguoiDung, NguoiDungUpdateRequest request){
         NguoiDung nguoiDung = getNguoiDung(MaNguoiDung);
 
         // Kiểm tra xem email có thay đổi hay không
@@ -64,12 +64,12 @@ public class NguoiDungService {
     }
 
         //get user by id
-    public NguoiDung getNguoiDung(Long MaNguoiDung){
+    public NguoiDung getNguoiDung(Integer MaNguoiDung){
         return nguoiDungRepository.findById(MaNguoiDung).orElseThrow(() -> new RuntimeException("nguoi dung khong co"));
     }
 
         // delete user
-    public void deleteNguoiDung(Long MaNguoiDung){
+    public void deleteNguoiDung(Integer MaNguoiDung){
         nguoiDungRepository.deleteById(MaNguoiDung);
     }
 }

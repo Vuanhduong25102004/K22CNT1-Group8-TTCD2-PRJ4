@@ -33,12 +33,12 @@ public class NguoiDungController {
     }
 
     @GetMapping("/{MaNguoiDung}")
-    NguoiDung getNguoiDung(@PathVariable("MaNguoiDung") Long MaNguoiDung){
+    NguoiDung getNguoiDung(@PathVariable("MaNguoiDung") Integer MaNguoiDung){
         return nguoiDungService.getNguoiDung(MaNguoiDung);
     }
 
     @PutMapping("/{MaNguoiDung}")
-    NguoiDung updateNguoiDung(@PathVariable Long MaNguoiDung, @RequestBody NguoiDungUpdateRequest request){
+    NguoiDung updateNguoiDung(@PathVariable Integer MaNguoiDung, @RequestBody NguoiDungUpdateRequest request){
         try {
             return nguoiDungService.updateNguoiDung(MaNguoiDung, request);
         } catch (RuntimeException e) {
@@ -48,7 +48,7 @@ public class NguoiDungController {
     }
 
     @DeleteMapping("/{MaNguoiDung}")
-    String deleteNguoiDung(@PathVariable Long MaNguoiDung){
+    String deleteNguoiDung(@PathVariable Integer MaNguoiDung){
         nguoiDungService.deleteNguoiDung(MaNguoiDung);
         return "Người dùng đã bị xóa";
     }

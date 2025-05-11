@@ -15,7 +15,7 @@ public class NguoiDung {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long MaNguoiDung; // Cột khóa chính
+    private Integer maNguoiDung; // Cột khóa chính
 
     @Column(name = "HoTen", nullable = false) // Ánh xạ với cột HoTen trong cơ sở dữ liệu
     private String HoTen;
@@ -50,12 +50,12 @@ public class NguoiDung {
 
     // Getter và Setter
 
-    public Long getMaNguoiDung() {
-        return MaNguoiDung;
+    public Integer getMaNguoiDung() {
+        return maNguoiDung;
     }
 
-    public void setMaNguoiDung(Long maNguoiDung) {
-        MaNguoiDung = maNguoiDung;
+    public void setMaNguoiDung(Integer maNguoiDung) {
+        maNguoiDung = maNguoiDung;
     }
 
     public String getHoTen() {

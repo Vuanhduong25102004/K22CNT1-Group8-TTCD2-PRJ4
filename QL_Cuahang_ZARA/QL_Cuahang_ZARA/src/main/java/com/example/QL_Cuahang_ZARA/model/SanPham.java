@@ -29,6 +29,14 @@ public class SanPham {
     @Column(name = "HinhAnh", length = 255)
     private String hinhAnh;
 
+    public SanPham() {
+        // Constructor mặc định
+    }
+
+    public SanPham(Integer maSanPham) {
+        this.maSanPham = maSanPham;
+    }
+
     // Getters and Setters
     public Integer getMaSanPham() {
         return maSanPham;
@@ -77,4 +85,5 @@ public class SanPham {
     public void setHinhAnh(String hinhAnh) {
         this.hinhAnh = hinhAnh;
     }
+
 }
