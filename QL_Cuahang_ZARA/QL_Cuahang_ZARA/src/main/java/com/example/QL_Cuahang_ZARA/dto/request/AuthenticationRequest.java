@@ -8,10 +8,7 @@ import lombok.experimental.FieldDefaults;
 @AllArgsConstructor
 @Builder
 @FieldDefaults(level = AccessLevel.PRIVATE)
-public class NguoiDungUpdateRequest {
-    String HoTen;
+public class AuthenticationRequest {
     String email;
     String MatKhau;
-    String Role;
 }
-

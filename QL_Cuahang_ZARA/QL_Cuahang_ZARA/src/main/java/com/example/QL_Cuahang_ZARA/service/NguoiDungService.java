@@ -4,26 +4,37 @@ import com.example.QL_Cuahang_ZARA.dto.request.NguoiDungCreationRequest;
 import com.example.QL_Cuahang_ZARA.dto.request.NguoiDungUpdateRequest;
 import com.example.QL_Cuahang_ZARA.model.NguoiDung;
 import com.example.QL_Cuahang_ZARA.repository.NguoiDungRepository;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import com.example.QL_Cuahang_ZARA.model.NguoiDung.Role;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE , makeFinal = true)
 public class NguoiDungService {
-    @Autowired
-    private NguoiDungRepository nguoiDungRepository;
+    NguoiDungRepository nguoiDungRepository;
 
+
+    // tạo mới người dùng
     public NguoiDung createNguoiDung(NguoiDungCreationRequest request){
         NguoiDung nguoiDung = new NguoiDung();
 
         if(nguoiDungRepository.existsByEmail(request.getEmail())){
             throw new RuntimeException("Email này đã tồn tại.");
         }
+
         nguoiDung.setHoTen(request.getHoTen());
         nguoiDung.setEmail(request.getEmail());
-        nguoiDung.setMatKhau(request.getMatKhau());
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
+
+        nguoiDung.setMatKhau(passwordEncoder.encode(request.getMatKhau()));
 
         return nguoiDungRepository.save(nguoiDung);
     }
@@ -43,7 +54,9 @@ public class NguoiDungService {
         }
 
         nguoiDung.setHoTen(request.getHoTen());
-        nguoiDung.setMatKhau(request.getMatKhau());
+        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
+
+        nguoiDung.setMatKhau(passwordEncoder.encode(request.getMatKhau()));
 
         // Cập nhật Role nếu có thay đổi
         if (request.getRole() != null) {

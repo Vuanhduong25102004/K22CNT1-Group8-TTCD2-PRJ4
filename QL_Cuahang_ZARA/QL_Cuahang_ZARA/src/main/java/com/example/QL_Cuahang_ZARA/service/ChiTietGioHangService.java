@@ -6,21 +6,21 @@ import com.example.QL_Cuahang_ZARA.model.SanPham;
 import com.example.QL_Cuahang_ZARA.repository.ChiTietGioHangRepository;
 import com.example.QL_Cuahang_ZARA.repository.GioHangRepository;
 import com.example.QL_Cuahang_ZARA.repository.SanPhamRepository;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE , makeFinal = true)
 public class ChiTietGioHangService {
-    @Autowired
-    private ChiTietGioHangRepository chiTietGioHangRepository;
-
-    @Autowired
-    private SanPhamRepository sanPhamRepository;
-
-    @Autowired
-    private GioHangRepository gioHangRepository;
+    ChiTietGioHangRepository chiTietGioHangRepository;
+    SanPhamRepository sanPhamRepository;
+    GioHangRepository gioHangRepository;
 
 
     // Trả về danh sách sản phẩm trong giỏ hàng
@@ -53,7 +53,7 @@ public class ChiTietGioHangService {
         return chiTietGioHangRepository.save(moi);
     }
 
-    //xóa sản phẩm khỏi giỏ hàng
+    //xóa sản phẩm khỏi giỏ
     public void xoaSanPhamKhoiGio(Integer maChiTiet){
         chiTietGioHangRepository.deleteById(maChiTiet);
     }
