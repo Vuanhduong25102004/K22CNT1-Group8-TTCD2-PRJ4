@@ -1,6 +1,7 @@
 package com.example.QL_Cuahang_ZARA.controller;
 
 import com.example.QL_Cuahang_ZARA.dto.request.AuthenticationRequest;
+import com.example.QL_Cuahang_ZARA.dto.request.TokenValidationRequest;
 import com.example.QL_Cuahang_ZARA.service.AuthService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -25,11 +26,34 @@ public class AuthController {
         boolean isAuthenticated = authService.authenticate(request);
 
         if(isAuthenticated){
+            String token = authService.createToken(request.getEmail());
             // Nếu đăng nhập thành công, trả về mã trạng thái 200 (OK) và thông báo
-            return ResponseEntity.ok("Đăng nhập thành công.");
+            return ResponseEntity.ok("Đăng nhập thành công.\n" + "Token: "+ token);
         } else {
             // Nếu đăng nhập thất bại, trả về mã trạng thái 401 (Unauthorized) và thông báo lỗi
             return ResponseEntity.status(401).body("Mật khẩu sai.");
         }
     }
+
+    @PostMapping("/validate-token")
+    public ResponseEntity<String> validateToken(@RequestBody TokenValidationRequest request) {
+        String token = request.getToken();  // Lấy token từ request
+
+        try {
+            // Lấy email từ token
+            String email = authService.extractEmail(token);
+
+            // Xác thực token
+            boolean isValid = authService.validateToken(token, email);
+
+            if (isValid) {
+                return ResponseEntity.ok("Token hợp lệ.");
+            } else {
+                return ResponseEntity.status(401).body("Token không hợp lệ hoặc hết hạn.");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(401).body("Token không hợp lệ hoặc hết hạn.");
+        }
+    }
+
 }
