@@ -2,6 +2,8 @@ package com.example.QL_Cuahang_ZARA.controller;
 
 import com.example.QL_Cuahang_ZARA.dto.request.AuthenticationRequest;
 import com.example.QL_Cuahang_ZARA.dto.request.TokenValidationRequest;
+import com.example.QL_Cuahang_ZARA.model.NguoiDung;
+import com.example.QL_Cuahang_ZARA.repository.NguoiDungRepository;
 import com.example.QL_Cuahang_ZARA.service.AuthService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AuthController {
     AuthService authService;
+    NguoiDungRepository nguoiDungRepository;
 
     //Endpoint login
     @PostMapping("/login")
@@ -26,7 +29,10 @@ public class AuthController {
         boolean isAuthenticated = authService.authenticate(request);
 
         if(isAuthenticated){
-            String token = authService.createToken(request.getEmail());
+            NguoiDung nguoiDung = nguoiDungRepository.findByEmail(request.getEmail())
+                    .orElseThrow(() -> new RuntimeException("Tài khoản không tòn tại."));
+
+            String token = authService.createToken(request.getEmail(), nguoiDung.getRole());
             // Nếu đăng nhập thành công, trả về mã trạng thái 200 (OK) và thông báo
             return ResponseEntity.ok("Đăng nhập thành công.\n" + "Token: "+ token);
         } else {

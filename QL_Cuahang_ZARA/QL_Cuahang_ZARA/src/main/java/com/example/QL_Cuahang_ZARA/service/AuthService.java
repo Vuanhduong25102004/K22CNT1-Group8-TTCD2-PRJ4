@@ -8,10 +8,8 @@ import com.nimbusds.jose.crypto.MACSigner;
 import com.nimbusds.jose.crypto.MACVerifier;
 import com.nimbusds.jwt.JWTClaimsSet;
 import com.nimbusds.jwt.SignedJWT;
-import lombok.AccessLevel;
-import lombok.RequiredArgsConstructor;
-import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -27,7 +25,8 @@ public class AuthService {
     @Autowired
     private NguoiDungRepository nguoiDungRepository;
 
-    private static final String SECRET_KEY = "fyFv8vp5L5O9mU82RqgCVLxz225RzZl6FLjldr6pltIJeuupWVTIGmbTGokAcfKL";
+    @Value("${app.secret.key}")
+    private String SECRET_KEY;
 
     //Xác thực người dùng khi đăng nhập
     public boolean authenticate(AuthenticationRequest request){
@@ -39,7 +38,7 @@ public class AuthService {
 
         //Kiểm tra mật khẩu
         if(passwordEncoder.matches(request.getMatKhau(), nguoiDung.getMatKhau())){
-            var token =     createToken(request.getEmail());
+            String token = createToken(request.getEmail(), nguoiDung.getRole());
             return true;
         }else{
             return false;
@@ -47,13 +46,13 @@ public class AuthService {
     }
 
     //Tạo JWT Token
-    public String createToken(String email) {
+    public String createToken(String email, NguoiDung.Role role) {
         try {
             // Tạo claims cho token
             JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
                     .issuer("VuDuong")
                     .subject(email)
-                    .claim("customClaim", "Custom")
+                    .claim("role", role.name())  // Thêm role vào claims
                     .issueTime(new Date())
                     .expirationTime(new Date(
                             Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli())
@@ -62,7 +61,7 @@ public class AuthService {
 
             //Tạo một JWT object với HMAC signer
             SignedJWT signedJWT = new SignedJWT(
-                    new JWSHeader(JWSAlgorithm.HS256),
+                    new JWSHeader(JWSAlgorithm.HS512),
                     claimsSet
             );
 
@@ -111,5 +110,10 @@ public class AuthService {
         } catch (ParseException e) {
             throw new RuntimeException("Error while extracting email from JWT", e);
         }
+    }
+    public NguoiDung.Role getRoleByEmail(String email) {
+        NguoiDung nguoiDung = nguoiDungRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Tài khoản không tồn tại."));
+        return nguoiDung.getRole();  // Trả về Role của người dùng
     }
 }
