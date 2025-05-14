@@ -8,6 +8,9 @@ import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PostAuthorize;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -39,7 +42,7 @@ public class NguoiDungService {
         return nguoiDungRepository.save(nguoiDung);
     }
 
-        // update user
+    // update user
     public NguoiDung updateNguoiDung(Integer MaNguoiDung, NguoiDungUpdateRequest request){
         NguoiDung nguoiDung = getNguoiDung(MaNguoiDung);
 
@@ -69,20 +72,32 @@ public class NguoiDungService {
         return nguoiDungRepository.save(nguoiDung);
     }
 
-        //get all user
+    //get all user
     public List<NguoiDung> getNguoiDung() {
         List<NguoiDung> nguoiDung = nguoiDungRepository.findAll();
         System.out.println("Số lượng người dùng: " + nguoiDung.size()); // Thêm log để kiểm tra dữ liệu
         return nguoiDung;
     }
 
-        //get user by id
+    //get user by id
+    @PostAuthorize("returnObject.email == authentication.name")
     public NguoiDung getNguoiDung(Integer MaNguoiDung){
         return nguoiDungRepository.findById(MaNguoiDung).orElseThrow(() -> new RuntimeException("nguoi dung khong co"));
     }
 
-        // delete user
+    // delete user
+    @PreAuthorize("hasRole('ADMIN')")
     public void deleteNguoiDung(Integer MaNguoiDung){
         nguoiDungRepository.deleteById(MaNguoiDung);
+    }
+
+    //get my info
+    public NguoiDung getMyInfo(){
+        var context = SecurityContextHolder.getContext();
+        String name = context.getAuthentication().getName();
+
+        NguoiDung nguoiDung = nguoiDungRepository.findByEmail(name).orElseThrow(() -> new RuntimeException("Người dùng không tồn tại"));
+
+        return nguoiDung;
     }
 }

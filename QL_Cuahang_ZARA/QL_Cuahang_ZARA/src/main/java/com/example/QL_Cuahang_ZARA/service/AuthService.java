@@ -13,11 +13,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.text.ParseException;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
+import java.util.StringJoiner;
 
 @Service
 public class AuthService {
@@ -38,7 +40,7 @@ public class AuthService {
 
         //Kiểm tra mật khẩu
         if(passwordEncoder.matches(request.getMatKhau(), nguoiDung.getMatKhau())){
-            String token = createToken(request.getEmail(), nguoiDung.getRole());
+            String token = createToken(nguoiDung);
             return true;
         }else{
             return false;
@@ -46,14 +48,14 @@ public class AuthService {
     }
 
     //Tạo JWT Token
-    public String createToken(String email, NguoiDung.Role role) {
+    public String createToken(NguoiDung nguoiDung) {
         try {
             // Tạo claims cho token
             JWTClaimsSet claimsSet = new JWTClaimsSet.Builder()
                     .issuer("VuDuong")
-                    .subject(email)
-                    .claim("role", role.name())  // Thêm role vào claims
+                    .subject(nguoiDung.getEmail())// Thêm role vào claims
                     .issueTime(new Date())
+                    .claim("scope",buildScope(nguoiDung))
                     .expirationTime(new Date(
                             Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli())
                     )
@@ -111,9 +113,13 @@ public class AuthService {
             throw new RuntimeException("Error while extracting email from JWT", e);
         }
     }
-    public NguoiDung.Role getRoleByEmail(String email) {
-        NguoiDung nguoiDung = nguoiDungRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("Tài khoản không tồn tại."));
-        return nguoiDung.getRole();  // Trả về Role của người dùng
+
+    private String buildScope(NguoiDung nguoiDung){
+        StringJoiner stringJoiner = new StringJoiner(" ");
+        // Kiểm tra Role của người dùng và thêm vào stringJoiner
+        if (nguoiDung.getRole() != null) {
+            stringJoiner.add(nguoiDung.getRole().name());  // Chỉ cần thêm tên Role
+        }
+        return stringJoiner.toString();
     }
 }

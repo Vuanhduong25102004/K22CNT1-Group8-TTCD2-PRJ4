@@ -32,7 +32,7 @@ public class AuthController {
             NguoiDung nguoiDung = nguoiDungRepository.findByEmail(request.getEmail())
                     .orElseThrow(() -> new RuntimeException("Tài khoản không tòn tại."));
 
-            String token = authService.createToken(request.getEmail(), nguoiDung.getRole());
+            String token = authService.createToken(nguoiDung);
             // Nếu đăng nhập thành công, trả về mã trạng thái 200 (OK) và thông báo
             return ResponseEntity.ok("Đăng nhập thành công.\n" + "Token: "+ token);
         } else {

@@ -1,16 +1,21 @@
 package com.example.QL_Cuahang_ZARA.controller;
 
+import com.example.QL_Cuahang_ZARA.config.SecurityConfig;
 import com.example.QL_Cuahang_ZARA.dto.request.NguoiDungCreationRequest;
 import com.example.QL_Cuahang_ZARA.dto.request.NguoiDungUpdateRequest;
 import com.example.QL_Cuahang_ZARA.model.NguoiDung;
 import com.example.QL_Cuahang_ZARA.service.NguoiDungService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
+@Slf4j
 @RestController
 @RequestMapping("/users")
 public class NguoiDungController {
@@ -29,12 +34,22 @@ public class NguoiDungController {
 
     @GetMapping
     public List<NguoiDung> getNguoiDung() {
+        var authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        log.info("Email: {}", authentication.getName());
+        authentication.getAuthorities().forEach(grantedAuthority -> log.info(grantedAuthority.getAuthority()));
+
         return nguoiDungService.getNguoiDung();
     }
 
     @GetMapping("/{MaNguoiDung}")
     NguoiDung getNguoiDung(@PathVariable("MaNguoiDung") Integer MaNguoiDung){
         return nguoiDungService.getNguoiDung(MaNguoiDung);
+    }
+
+    @GetMapping("/myinfo")
+    public NguoiDung getMyInfo() {
+        return nguoiDungService.getMyInfo();
     }
 
     @PutMapping("/{MaNguoiDung}")
