@@ -1,6 +1,8 @@
 package com.example.QL_Cuahang_ZARA.config;
 
+import com.example.QL_Cuahang_ZARA.dto.request.BlacklistTokenFilter;
 import com.example.QL_Cuahang_ZARA.model.NguoiDung;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Configurable;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -17,6 +19,7 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -31,6 +34,9 @@ public class SecurityConfig {
     @Value("${app.secret.key}")
     private String SECRET_KEY;
 
+    @Autowired
+    private BlacklistTokenFilter blacklistTokenFilter;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity httpSecurity) throws Exception {
         httpSecurity.authorizeHttpRequests(request ->
@@ -42,6 +48,8 @@ public class SecurityConfig {
                 oauth2.jwt(jwtConfigurer ->
                         jwtConfigurer.decoder(jwtDecoder())
                                 .jwtAuthenticationConverter(jwtAuthenticationConverter())));
+
+        httpSecurity.addFilterBefore(blacklistTokenFilter, UsernamePasswordAuthenticationFilter.class);
 
         httpSecurity.csrf(AbstractHttpConfigurer::disable);
         return httpSecurity.build();

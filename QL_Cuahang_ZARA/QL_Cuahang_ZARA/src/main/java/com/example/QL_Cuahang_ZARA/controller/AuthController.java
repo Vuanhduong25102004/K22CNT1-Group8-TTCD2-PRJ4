@@ -5,14 +5,12 @@ import com.example.QL_Cuahang_ZARA.dto.request.TokenValidationRequest;
 import com.example.QL_Cuahang_ZARA.model.NguoiDung;
 import com.example.QL_Cuahang_ZARA.repository.NguoiDungRepository;
 import com.example.QL_Cuahang_ZARA.service.AuthService;
+import com.example.QL_Cuahang_ZARA.service.TokenBlackListService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
@@ -21,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
     AuthService authService;
     NguoiDungRepository nguoiDungRepository;
+    TokenBlackListService tokenBlackListService;
 
     //Endpoint login
     @PostMapping("/login")
@@ -62,4 +61,13 @@ public class AuthController {
         }
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(@RequestHeader("Authorization") String authHeader){
+        if(authHeader != null && authHeader.startsWith("Bearer ")){
+            String token = authHeader.substring(7);
+            tokenBlackListService.blacklistToken(token);
+            return ResponseEntity.ok("Đã đăng xuất thành công");
+        }
+        return  ResponseEntity.badRequest().body("Token không hợp lệ");
+    }
 }
