@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Header Grid Layout</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        header {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            align-items: center;
+            padding: 10px 40px;
+            background-color: transparent;
+            /* không màu nền */
+            gap: 20px;
+            border-bottom: 1px solid #ccc;
+            /* tạo viền dưới nếu muốn */
+        }
+
+        .left-group {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .menu-btn {
+            font-size: 24px;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .logo img {
+            height: 80px;
+            display: block;
+        }
+
+        .right-group {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        .right-group a {
+            color: #333;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+
+<body>
+
+    <header>
+        <div class="left-group">
+            <button class="menu-btn" aria-label="Menu">&#9776;</button>
+            <div class="logo">
+                <img src="https://static.zara.net/static/images/logo.png" alt="ZARA Logo" />
+            </div>
+        </div>
+
+        <div class="center-group">
+            <!-- Nếu muốn chèn nội dung giữa thì thêm vào đây -->
+        </div>
+
+        <div class="right-group">
+            <a href="/login">LOG IN</a>
+            <a href="/help">HELP</a>
+            <a href="/cart">SHOPPING BAG [0]</a>
+        </div>
+    </header>
+
+</body>
+
+</html>

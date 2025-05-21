@@ -1,0 +1,38 @@
+body{
+     font-family: "Neue Helvetica", Helvetica, Arial, sans-serif;
+}
+header {
+     padding: 20px 48px;
+     display: flex;
+     justify-content: flex-start;
+}
+.logo{
+     padding-left: 48px;
+     gap: 100020px;
+}
+.ul-search-login-help-shoppingbag{
+     margin-left: auto;
+     display: flex;
+     gap: 10px;
+     list-style: none;
+     justify-content: space-around;
+     padding-top: 24px;
+}
+.span-search,
+.li-login,
+.li-help,
+.li-shoppingbag{
+     font-size: 13px;
+}
+.span-search {
+     border-bottom: 1px solid black;
+     display: inline-block;  // để width, height có tác dụng
+     width: 170px;           // bạn chỉnh theo ý muốn
+     height: 21px;     
+     padding-bottom: 4px;
+     margin-right: 56px;
+}
+.header-icon{
+     padding-bottom: 8px;
+}
+
