@@ -1,17 +1,34 @@
 body{
-     font-family: "Neue Helvetica", Helvetica, Arial, sans-serif;
+  font-family: "Neue Helvetica", Helvetica, Arial, sans-serif;
+  padding-top: 213px; /* hoặc main { padding-top: 213px; } nếu bạn dùng thẻ main */
+
 }
 header {
-     display: flex;
-     align-items: center;   
-     padding: 20px 48px;
-     gap: 20px;
-     align-items: flex-start;
-     flex-wrap: nowrap;  
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: transparent;  /* Thay vì transparent để dễ nhìn */
+  z-index: 1000;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  display: flex;
+  align-items: flex-start;
+  padding: 20px 48px;
+  gap: 20px;
+  flex-wrap: nowrap;
 }
-.logo{
-     padding-left: 48px;
-     gap: 1000px;
+
+.logo img {
+  height: auto;
+  max-height: 173px;
+  width: auto;
+  max-width: 420px;
+  transition: opacity 0.3s ease;
+  opacity: 1;
+  padding-left: 48px;
+}
+.logo img.fade {
+  opacity: 0;
 }
 
 .ul-search-login-help-shoppingbag {
@@ -71,12 +88,6 @@ header {
     margin-right: 20px;     /* Giảm margin-right từ 96px xuống 20px */
     padding-bottom: 6px;    /* Có thể giảm padding cho gọn */
     font-size: 12px;        /* Thu nhỏ font để vừa hơn */
-  }
-}
-
-@media (max-width: 750px) {
-  .li-help {
-     
   }
 }
 

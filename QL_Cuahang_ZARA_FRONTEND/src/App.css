@@ -1,3 +1,18 @@
 .app-content-wrapper{
   margin: 0 46px 0 46px;
 }
+body::-webkit-scrollbar {
+  display: none;
+}
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 60px;          /* chiều cao header */
+  background-color: transparent; /* nền mờ để nhìn rõ nội dung bên dưới */
+  z-index: 1000;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  border: none;
+  box-shadow: none;
+}
