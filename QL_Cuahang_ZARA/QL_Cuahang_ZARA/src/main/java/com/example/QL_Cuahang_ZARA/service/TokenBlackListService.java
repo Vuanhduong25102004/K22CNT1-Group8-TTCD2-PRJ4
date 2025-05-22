@@ -13,7 +13,7 @@ public class TokenBlackListService {
         blacklist.add(token);
     }
 
-    public boolean isTokenBlacklisted(String token) {
+    public boolean isBlacklisted(String token) {
         return blacklist.contains(token);
     }
 }

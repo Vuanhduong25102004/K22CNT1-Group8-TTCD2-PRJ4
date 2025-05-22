@@ -12,6 +12,8 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/giohang")
+@CrossOrigin("*")
+
 public class GioHangController {
     @Autowired
     private GioHangService gioHangService;

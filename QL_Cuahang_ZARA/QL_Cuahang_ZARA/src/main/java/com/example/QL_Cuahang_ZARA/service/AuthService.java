@@ -1,6 +1,8 @@
 package com.example.QL_Cuahang_ZARA.service;
 
 import com.example.QL_Cuahang_ZARA.dto.request.AuthenticationRequest;
+import com.example.QL_Cuahang_ZARA.dto.request.RefreshTokenRequest;
+import com.example.QL_Cuahang_ZARA.dto.response.AuthenticationResponse;
 import com.example.QL_Cuahang_ZARA.model.NguoiDung;
 import com.example.QL_Cuahang_ZARA.repository.NguoiDungRepository;
 import com.nimbusds.jose.*;
@@ -26,6 +28,8 @@ public class AuthService {
 
     @Autowired
     private NguoiDungRepository nguoiDungRepository;
+    @Autowired
+    private TokenBlackListService tokenBlackListService;
 
     @Value("${app.secret.key}")
     private String SECRET_KEY;
@@ -76,33 +80,94 @@ public class AuthService {
             throw new RuntimeException("Error while signing JWT", e);
         }
     }
+
     // Xác thực JWT token
     public boolean validateToken(String token, String email) {
-        try {
-            // Giải mã JWT token
-            SignedJWT signedJWT = SignedJWT.parse(token);
+        if (tokenBlackListService.isBlacklisted(token)) {
+            return false;  // token đã bị blacklist
+        }
 
-            // Kiểm tra chữ ký JWT
+        try {
+            SignedJWT signedJWT = SignedJWT.parse(token);
             JWSVerifier verifier = new MACVerifier(SECRET_KEY);
             if (!signedJWT.verify(verifier)) {
-                return false;  // Nếu chữ ký không hợp lệ, trả về false
+                return false;
             }
 
-            // Lấy thông tin claims từ token
             JWTClaimsSet claimsSet = signedJWT.getJWTClaimsSet();
             String subject = claimsSet.getSubject();
 
-            // Kiểm tra xem subject có trùng với email và token có hết hạn chưa
             return subject.equals(email) && !isTokenExpired(claimsSet);
         } catch (ParseException | JOSEException e) {
             throw new RuntimeException("Error while validating JWT", e);
         }
     }
+
     // Kiểm tra xem token có hết hạn chưa
     private boolean isTokenExpired(JWTClaimsSet claimsSet) {
         Date expirationTime = claimsSet.getExpirationTime();
         return expirationTime != null && expirationTime.before(new Date());
     }
+
+    private boolean isTokenNearExpiry(JWTClaimsSet claimsSet, long thresholdMinutes) {
+        Date expirationTime = claimsSet.getExpirationTime();
+        if (expirationTime == null) return true; // Không rõ hạn => coi như cần refresh
+
+        Instant expiryInstant = expirationTime.toInstant();
+        Instant now = Instant.now();
+
+        // Nếu thời gian còn lại nhỏ hơn ngưỡng threshold (phút), trả về true
+        return expiryInstant.isBefore(now.plus(thresholdMinutes, ChronoUnit.MINUTES));
+    }
+
+    public AuthenticationResponse refreshToken(RefreshTokenRequest request, boolean forceRefresh) {
+        String oldToken = request.getToken();
+
+        try {
+            SignedJWT signedJWT = SignedJWT.parse(oldToken);
+            JWTClaimsSet claimsSet = signedJWT.getJWTClaimsSet();
+            String email = claimsSet.getSubject();
+
+            if (!validateToken(oldToken, email)) {
+                return AuthenticationResponse.builder()
+                        .token(null)
+                        .authenticated(false)
+                        .build();
+            }
+
+            boolean nearExpiry = isTokenNearExpiry(claimsSet, 5);
+
+            if (!forceRefresh && !nearExpiry) {
+                // Token còn hạn dài và không bắt buộc refresh => trả token cũ
+                return AuthenticationResponse.builder()
+                        .token(oldToken)
+                        .authenticated(true)
+                        .build();
+            }
+
+            // Bắt buộc hoặc token gần hết hạn => blacklist token cũ và tạo mới
+            tokenBlackListService.blacklistToken(oldToken);
+
+            NguoiDung nguoiDung = nguoiDungRepository.findByEmail(email)
+                    .orElseThrow(() -> new RuntimeException("Người dùng không tồn tại."));
+
+            String newToken = createToken(nguoiDung);
+
+            return AuthenticationResponse.builder()
+                    .token(newToken)
+                    .authenticated(true)
+                    .build();
+
+        } catch (Exception e) {
+            return AuthenticationResponse.builder()
+                    .token(null)
+                    .authenticated(false)
+                    .build();
+        }
+    }
+
+
+
 
     // Lấy email từ JWT
     public String extractEmail(String token) {

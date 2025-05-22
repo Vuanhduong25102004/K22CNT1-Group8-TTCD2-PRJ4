@@ -18,6 +18,8 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequestMapping("/users")
+@CrossOrigin("*")
+
 public class NguoiDungController {
     @Autowired
     private NguoiDungService nguoiDungService;

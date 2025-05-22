@@ -23,7 +23,7 @@ public class BlacklistTokenFilter extends OncePerRequestFilter {
         String header = request.getHeader("Authorization");
         if (header != null && header.startsWith("Bearer ")){
             String token = header.substring(7);
-            if (tokenBlackListService.isTokenBlacklisted(token)){
+            if (tokenBlackListService.isBlacklisted(token)){
                 System.out.println("Token bị blacklist: " + token);
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 response.setCharacterEncoding("UTF-8");

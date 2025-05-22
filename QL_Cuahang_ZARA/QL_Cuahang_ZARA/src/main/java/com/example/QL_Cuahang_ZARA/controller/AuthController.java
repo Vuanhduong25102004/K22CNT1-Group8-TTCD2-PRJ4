@@ -1,7 +1,9 @@
 package com.example.QL_Cuahang_ZARA.controller;
 
 import com.example.QL_Cuahang_ZARA.dto.request.AuthenticationRequest;
+import com.example.QL_Cuahang_ZARA.dto.request.RefreshTokenRequest;
 import com.example.QL_Cuahang_ZARA.dto.request.TokenValidationRequest;
+import com.example.QL_Cuahang_ZARA.dto.response.AuthenticationResponse;
 import com.example.QL_Cuahang_ZARA.model.NguoiDung;
 import com.example.QL_Cuahang_ZARA.repository.NguoiDungRepository;
 import com.example.QL_Cuahang_ZARA.service.AuthService;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
+@CrossOrigin("*")
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AuthController {
@@ -69,5 +72,15 @@ public class AuthController {
             return ResponseEntity.ok("Đã đăng xuất thành công");
         }
         return  ResponseEntity.badRequest().body("Token không hợp lệ");
+    }
+
+    @PostMapping("/refresh-token")
+    public ResponseEntity<AuthenticationResponse> refreshToken(@RequestBody RefreshTokenRequest request) {
+        AuthenticationResponse response = authService.refreshToken(request, true);
+        if (response.isAuthenticated()) {
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.status(401).body(response);
+        }
     }
 }

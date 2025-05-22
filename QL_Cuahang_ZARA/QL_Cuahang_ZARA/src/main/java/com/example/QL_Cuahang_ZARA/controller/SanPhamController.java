@@ -11,7 +11,8 @@ import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/products")  // Định nghĩa đường dẫn API cho sản phẩm
+@RequestMapping("/products")// Định nghĩa đường dẫn API cho sản phẩm
+@CrossOrigin("*")
 public class SanPhamController {
 
     @Autowired
