@@ -1,25 +1,31 @@
-import Login from './pages/Login';
-import Home from './pages/Home'
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import './App.css';
+import React from 'react';
+import { BrowserRouter, useLocation } from 'react-router-dom';
 import HeaderComponents from './components/HeaderComponents';
 import FooterComponents from './components/FooterComponents';
+import AppRoutes from './routes/AppRoutes';
+import './App.css';
+
+function Layout() {
+  const location = useLocation();
+
+  // Nếu đang ở trang /login thì không render Header
+  const hideHeader = location.pathname === '/login';
+
+  return (
+    <>
+      {!hideHeader && <HeaderComponents />}
+      <AppRoutes />
+      {!hideHeader && <FooterComponents />}
+    </>
+  );
+}
 
 function App() {
   return (
-    <>
-      <HeaderComponents />
-      <div className="app-content-wrapper" style={{ margin: '0 46px' }}>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-          </Routes>
-        </BrowserRouter>
-      </div>
-      <FooterComponents />
-    </>
-  )
+    <BrowserRouter>
+      <Layout />
+    </BrowserRouter>
+  );
 }
 
-export default App
+export default App;

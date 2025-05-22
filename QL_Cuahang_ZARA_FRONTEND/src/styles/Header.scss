@@ -2,21 +2,39 @@ body{
      font-family: "Neue Helvetica", Helvetica, Arial, sans-serif;
 }
 header {
-     padding: 20px 48px;
      display: flex;
-     justify-content: flex-start;
+     align-items: center;   
+     padding: 20px 48px;
+     gap: 20px;
+     align-items: flex-start;
+     flex-wrap: nowrap;  
 }
 .logo{
      padding-left: 48px;
-     gap: 100020px;
+     gap: 1000px;
 }
-.ul-search-login-help-shoppingbag{
-     margin-left: auto;
+
+.ul-search-login-help-shoppingbag {
+     margin-left: auto; 
      display: flex;
-     gap: 10px;
+     gap: 15px;
      list-style: none;
-     justify-content: space-around;
-     padding-top: 24px;
+     padding: 15px 0 0 0;
+     align-items: center;
+}
+
+.ul-search-login-help-shoppingbag li {
+    display: inline-flex;    
+    align-items: center;       
+    white-space: nowrap; 
+    padding: 0;              
+    margin: 0;           
+}
+
+.ul-search-login-help-shoppingbag li a,
+.ul-search-login-help-shoppingbag li .span-search {
+    display: inline-block;    
+    white-space: nowrap;
 }
 .span-search,
 .li-login,
@@ -25,14 +43,40 @@ header {
      font-size: 13px;
 }
 .span-search {
-     border-bottom: 1px solid black;
-     display: inline-block;  // để width, height có tác dụng
-     width: 170px;           // bạn chỉnh theo ý muốn
-     height: 21px;     
-     padding-bottom: 4px;
-     margin-right: 56px;
+    border-bottom: 1px solid black;
+    display: inline-block;  
+    width: auto;         
+    height: auto;         
+    padding-bottom: 8px;
+    margin-right: 96px;    
+    min-width: 340px;       
 }
+
 .header-icon{
      padding-bottom: 8px;
+}
+
+@media (max-width: 1700px) {
+  .span-search {
+    min-width: 170px;       /* Giảm min-width từ 340px xuống 150px */
+    margin-right: 20px;     /* Giảm margin-right từ 96px xuống 20px */
+    padding-bottom: 6px;    /* Có thể giảm padding cho gọn */
+    font-size: 12px;        /* Thu nhỏ font để vừa hơn */
+  }
+}
+
+@media (max-width: 1000px) {
+  .span-search {
+    min-width: 88px;       /* Giảm min-width từ 340px xuống 150px */
+    margin-right: 20px;     /* Giảm margin-right từ 96px xuống 20px */
+    padding-bottom: 6px;    /* Có thể giảm padding cho gọn */
+    font-size: 12px;        /* Thu nhỏ font để vừa hơn */
+  }
+}
+
+@media (max-width: 750px) {
+  .li-help {
+     
+  }
 }
 

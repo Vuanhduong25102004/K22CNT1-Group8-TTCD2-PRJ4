@@ -1,0 +1,76 @@
+.logon-page{
+    margin: 56px 120px;
+}
+.logon-container{
+    display: flex;
+}
+.logon-left{
+    display: flex;
+    flex-direction: column;  /* xếp dọc từ trên xuống */
+    gap: 20px;    
+    margin-bottom: 200px;
+}
+.logon-buttons{
+    display: flex;
+    flex-direction: column; 
+    gap: 10px;    
+    align-items: flex-start;
+    
+}
+.logon-buttons button {
+    border: 1px solid black;
+    padding: 12px 24px;      /* tăng padding dọc và ngang */
+    font-size: 1.2rem; 
+    min-height: 40px;      /* chữ to hơn */
+    min-width: 280px;        /* chiều rộng tối thiểu */
+    cursor: pointer;         /* con trỏ chuột khi hover */
+    transition: background-color 0.3s ease;
+}
+.btn-login{
+    background-color: black;
+    color: #ffff;
+}
+.btn-login:hover {
+  background-color: #383838;
+}
+.btn-register:hover {
+  background-color: #dfdfdf;
+}
+.logon-right{
+    margin-left: 52px;
+}
+
+@media (max-width: 1024px) {
+  .logon-container {
+    flex-direction: column-reverse; /* Đảo vị trí: logon-right lên trên, logon-left xuống dưới */
+  }
+  .logon-page {
+    margin: 10px 30px;
+  }
+  .logon-right {
+    margin-left: 0;
+    margin-bottom: 20px; /* Khoảng cách dưới ảnh */
+    width: 100%;
+  }
+  .logon-image {
+    width: 100%; /* Ảnh full chiều rộng container */
+    height: auto;
+    display: block;
+  }
+  .logon-left {
+    margin-left: 0;
+    width: 100%;
+  }
+  .logon-buttons {
+    display: flex;
+    flex-direction: row; /* Ngang hàng */
+    gap: 10px;
+    align-items: center;
+    width: 100%;
+    justify-content: space-between; /* Cách đều 2 nút */
+  }
+  .logon-buttons button {
+    flex: 1; /* 2 nút chia đều chiều rộng */
+    min-width: 0; /* tránh nút quá rộng */
+  }
+}

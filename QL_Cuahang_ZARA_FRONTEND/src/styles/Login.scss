@@ -1,0 +1,137 @@
+.login-page {
+  position: relative;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+}
+
+.img-login {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 50%;
+  height: 100vh;
+  overflow: hidden;
+  z-index: 1;
+}
+
+.img-login img {
+  width: 100%;
+  height: 100vh;
+  object-fit: cover;
+  display: block;
+}
+.login-form-body{
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+.form-login {
+  position: absolute;
+  top: 24px;
+  max-width: 400px;                   /* chiều rộng tối đa */
+  width: 100%;                       /* chiếm hết vùng chứa */
+  min-width: 280px;
+  left: calc(50% - 400px - 80px);   /* cách ảnh 50px */
+  transform: none;                   /* không dịch transform */
+  z-index: 2;
+  box-sizing: border-box;
+  background: transparent;
+}
+
+/* Khi màn to hơn 1440px, co nhỏ form để không đè lên ảnh */
+@media (min-width: 1440px) {
+  .form-login {
+    max-width: 500px;
+    left: calc(50% - 500px - 150px);
+  }
+}
+
+@media (max-width: 1024px) {
+    .img-login {
+    display: none;
+  }
+
+  .form-login {
+    position: static;  /* bỏ position absolute để flow bình thường */
+    width: 100%;       /* chiếm hết chiều rộng */
+    max-width: none;   /* bỏ giới hạn max-width nếu có */
+    margin: 0;         /* bỏ margin nếu có */
+    transform: none;   /* bỏ transform */
+    padding: 20px;
+    box-sizing: border-box;
+    z-index: auto;     /* reset z-index */
+  }
+}
+
+.form-login input[type="email"],
+.form-login input[type="password"] {
+  border: none;              /* bỏ hết viền */
+  border-bottom: 1px solid #000; /* viền dưới 1px, màu đen */    
+  outline: none;             /* bỏ viền khi focus mặc định */
+  font-size: 1rem;
+  width: 100%;               /* full chiều rộng ô input */
+  box-sizing: border-box;
+  background-color: transparent; /* nền trong suốt */
+}
+
+.form-login input[type="email"]:focus,
+.form-login input[type="password"]:focus {
+  transition: border-color 0.3s ease;
+}
+
+.input-group {
+  position: relative;
+}
+
+.input-group input {
+  width: 100%;
+  font-size: 1rem;
+  border: none;
+  padding-top: 26px;
+  border-bottom: 1px solid #000;
+  background: transparent;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.input-group label {
+  position: absolute;
+  left: 0px;
+  top: 25px;
+  color: #999;
+  font-size: 0.9rem;
+  pointer-events: none;
+  transition: all 0.3s ease;
+}
+
+/* Khi input focus hoặc có dữ liệu, label nổi lên */
+.input-group input:focus + label,
+.input-group input:not(:placeholder-shown) + label {
+  top: 7px;
+  left: 0px;
+  font-size: 0.75rem;
+}
+
+.form-login button[type="submit"]{
+    background-color: #fff;
+    color: rgb(65, 65, 65);
+    border: 1px solid black;
+    width: 140px;
+    height: 28px;
+    padding: 1px 12px;
+    margin-top: 32px;
+    cursor: pointer;               
+}
+
+.form-login button[type="submit"]:hover{
+    background-color: #fcfcfc;
+    color: #979797;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.recovery-password-link{
+    font-size: 11px;
+    color: #3d3d3d;
+}
