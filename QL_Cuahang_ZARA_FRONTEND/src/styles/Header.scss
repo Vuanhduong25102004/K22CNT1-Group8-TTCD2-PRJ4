@@ -1,6 +1,5 @@
 body{
   font-family: "Neue Helvetica", Helvetica, Arial, sans-serif;
-  padding-top: 213px; /* hoặc main { padding-top: 213px; } nếu bạn dùng thẻ main */
 
 }
 header {
@@ -58,6 +57,9 @@ header {
 .li-help,
 .li-shoppingbag{
      font-size: 13px;
+}
+.li-login span{
+  text-transform: uppercase;
 }
 .span-search {
     border-bottom: 1px solid black;

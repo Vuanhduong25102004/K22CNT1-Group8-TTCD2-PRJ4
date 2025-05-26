@@ -1,20 +1,31 @@
 const API_URL = "http://localhost:8080/auth";
 
 export async function login(email, matKhau) {
-    const response = await fetch(`${API_URL}/login`, {  // chú ý đúng endpoint
+    console.log("Calling API with:", { email, matKhau });
+
+    const response = await fetch(`${API_URL}/login`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, matKhau }),  // gửi đúng key matKhau
+        body: JSON.stringify({ email, matKhau }),
     });
+
+    console.log("Response status:", response.status);
 
     if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Login failed");
+        console.error("Error response data:", errorData);
+        throw new Error(errorData.error || "Login failed");
     }
 
-    console.log("Login success");
+    const data = await response.json();
+    console.log("Login success", data);
 
-    return;
+    if (!data.token) {
+        console.error("Missing token in response", data);
+        throw new Error("Token not found in response");
+    }
+
+    return data.token;
 }

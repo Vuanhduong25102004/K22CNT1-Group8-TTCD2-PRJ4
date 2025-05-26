@@ -9,12 +9,14 @@ function Layout() {
   const location = useLocation();
 
   // Nếu đang ở trang /login thì không render Header
-  const hideHeader = location.pathname === '/login';
+  const hideHeader = location.pathname === '/login' || location.pathname === '/admin';
 
   return (
     <>
       {!hideHeader && <HeaderComponents />}
-      <AppRoutes />
+      <main style={{ paddingTop: !hideHeader ? '213px' : '0' }}>
+        <AppRoutes />
+      </main>
       {!hideHeader && <FooterComponents />}
     </>
   );

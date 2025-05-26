@@ -14,15 +14,19 @@ function Login() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        console.log("Form submitted with email:", email, "and password:", matKhau);
+
         setLoading(true);
         setMessage(null);
 
         try {
-            const data = await login(email, matKhau);
+            const token = await login(email, matKhau);
+            console.log("Token received:", token);
+            localStorage.setItem("token", token); // Lưu token
             setMessage("Login successful!");
-            navigate("/");
+            navigate("/"); // Chuyển trang admin sau login thành công
         } catch (error) {
-            setMessage("Login failed");
+            setMessage(error.message || "Login failed");
         } finally {
             setLoading(false);
         }
