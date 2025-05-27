@@ -14,9 +14,16 @@ import lombok.experimental.FieldDefaults;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @RestController
 @RequestMapping("/auth")
-@CrossOrigin("*")
+@CrossOrigin(
+        origins = "http://localhost:5173",
+        allowedHeaders = {"Authorization", "Content-Type"},
+        allowCredentials = "true"
+)
 @RequiredArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class AuthController {
@@ -26,20 +33,24 @@ public class AuthController {
 
     //Endpoint login
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody AuthenticationRequest request){
-        //Xác thực người dùng
+    public ResponseEntity<Map<String, String>> login(@RequestBody AuthenticationRequest request){
         boolean isAuthenticated = authService.authenticate(request);
 
         if(isAuthenticated){
             NguoiDung nguoiDung = nguoiDungRepository.findByEmail(request.getEmail())
-                    .orElseThrow(() -> new RuntimeException("Tài khoản không tòn tại."));
+                    .orElseThrow(() -> new RuntimeException("Tài khoản không tồn tại."));
 
             String token = authService.createToken(nguoiDung);
-            // Nếu đăng nhập thành công, trả về mã trạng thái 200 (OK) và thông báo
-            return ResponseEntity.ok("Đăng nhập thành công.\n" + "Token: "+ token);
+
+            Map<String, String> responseBody = new HashMap<>();
+            responseBody.put("message", "Đăng nhập thành công");
+            responseBody.put("token", token);
+
+            return ResponseEntity.ok(responseBody);
         } else {
-            // Nếu đăng nhập thất bại, trả về mã trạng thái 401 (Unauthorized) và thông báo lỗi
-            return ResponseEntity.status(401).body("Mật khẩu sai.");
+            Map<String, String> responseBody = new HashMap<>();
+            responseBody.put("error", "Mật khẩu sai");
+            return ResponseEntity.status(401).body(responseBody);
         }
     }
 

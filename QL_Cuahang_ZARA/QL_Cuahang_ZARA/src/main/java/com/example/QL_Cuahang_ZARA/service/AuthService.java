@@ -60,6 +60,7 @@ public class AuthService {
                     .subject(nguoiDung.getEmail())// Thêm role vào claims
                     .issueTime(new Date())
                     .claim("scope",buildScope(nguoiDung))
+                    .claim("hoTen", nguoiDung.getHoTen())
                     .expirationTime(new Date(
                             Instant.now().plus(1, ChronoUnit.HOURS).toEpochMilli())
                     )
