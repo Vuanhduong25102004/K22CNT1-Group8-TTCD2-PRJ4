@@ -2,6 +2,7 @@ import { useState } from "react";
 import { login } from "../services/LoginService";
 import myImage from '../assets/images/image-small-0808d3d9-9032-4491-b28b-115af99fb0ab-default_0.jpg';
 import { useNavigate } from "react-router-dom";
+import Logo1 from '../assets/svg/logo1.svg';
 import '../styles/Login.scss';
 
 function Login() {
@@ -22,22 +23,27 @@ function Login() {
         try {
             const token = await login(email, matKhau);
             console.log("Token received:", token);
-            localStorage.setItem("token", token); // Lưu token
+            if (!token) {
+                throw new Error("Token is undefined or null");
+            }
+            localStorage.setItem("token", token);
+            window.dispatchEvent(new Event('userChanged'));
+
             setMessage("Login successful!");
-            navigate("/"); // Chuyển trang admin sau login thành công
+            console.log("Navigate called");
+            navigate("/");
         } catch (error) {
+            console.error("Login error:", error);
             setMessage(error.message || "Login failed");
-        } finally {
-            setLoading(false);
         }
     };
 
     return (
         <div className="login-page">
             <div className="form-login">
-                <a href="#">ZARA</a>
+                <a href="/"><img src={Logo1} alt="" /></a>
                 <form onSubmit={handleSubmit} method="POST">
-                    <h2>LOG IN</h2>
+                    <h2 className="uppercase font-bold mt-4 text-2xl">LOG IN</h2>
                     <div className="login-form-body">
                         <div>
                             <div className="input-group">

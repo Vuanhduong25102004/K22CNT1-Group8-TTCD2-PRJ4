@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { IoSearchOutline } from "react-icons/io5";
 import { HiOutlineShoppingBag } from "react-icons/hi2";
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { logout } from '../services/logoutService';
 import { jwtDecode } from 'jwt-decode';
 import '../styles/Header.scss';
 import MenuIcon from '../assets/svg/svgexport-1.svg';
@@ -12,30 +13,30 @@ const logos = [Logo1, Logo2];
 
 export default function HeaderComponents() {
     const location = useLocation();
-    // Ẩn nút LOG IN khi đang ở trang /logon
-    const [logoIndex, setLogoIndex] = useState(0)
-    const [isFading, setIsFading] = useState(false);
+    const navigate = useNavigate(); // Thêm khai báo navigate
 
-    const hideLogin = location.pathname === '/logon';
+    const [showLogoutBtn, setShowLogoutBtn] = useState(false);
+    const [userName, setUserName] = useState(null);
+    const [logoIndex, setLogoIndex] = useState(0);
+    const [isFading, setIsFading] = useState(false);
     const breakpoint = 750;
     const [isMobile, setIsMobile] = useState(window.innerWidth <= breakpoint);
 
-    const [userName, setUserName] = useState(null);
+    const hideLogin = location.pathname === '/logon';
+
     useEffect(() => {
         const handleResize = () => {
             setIsMobile(window.innerWidth <= breakpoint);
         };
         window.addEventListener("resize", handleResize);
-        // Gọi luôn để cập nhật trạng thái ngay khi mount
         handleResize();
 
-
         const interval = setInterval(() => {
-            setIsFading(true); // Bắt đầu hiệu ứng ẩn logo
+            setIsFading(true);
             setTimeout(() => {
-                setLogoIndex(prev => (prev + 1) % logos.length); // đổi logo
-                setIsFading(false); // hiện logo mới
-            }, 300); // thời gian trùng với CSS transition-duration
+                setLogoIndex(prev => (prev + 1) % logos.length);
+                setIsFading(false);
+            }, 300);
         }, 6000);
 
         return () => {
@@ -44,19 +45,57 @@ export default function HeaderComponents() {
         };
     }, []);
 
-    //Để đặt đăng nhập thành hoten người đã đăng nhập
     useEffect(() => {
-        const token = localStorage.getItem("token");
-        if (token) {
-            try {
-                const decoded = jwtDecode(token);
-                const hoTen = decoded.hoTen; // Lấy claim hoTen từ token
-                setUserName(hoTen);
-            } catch (e) {
+        const updateUserName = () => {
+            const token = localStorage.getItem("token");
+            if (token) {
+                try {
+                    const decoded = jwtDecode(token);
+                    console.log("Decoded token:", decoded); // Debug xem token có trường gì
+                    const hoTen = decoded.hoTen || decoded.name || decoded.username || null;
+                    setUserName(hoTen);
+                } catch (e) {
+                    setUserName(null);
+                }
+            } else {
                 setUserName(null);
             }
-        }
+        };
+
+        updateUserName();
+
+        window.addEventListener('userChanged', updateUserName);
+        return () => {
+            window.removeEventListener('userChanged', updateUserName);
+        };
     }, []);
+
+    const handleLogout = () => {
+        logout()
+            .then(() => {
+                localStorage.removeItem('token');
+                window.dispatchEvent(new Event('userChanged'));
+                setUserName(null);
+                setShowLogoutBtn(false);
+                navigate('/');
+            })
+            .catch(err => {
+                console.error('Logout error:', err.response || err);
+                if (err.response && err.response.status === 401) {
+                    localStorage.removeItem('token');
+                    window.dispatchEvent(new Event('userChanged'));
+                    setUserName(null);
+                    setShowLogoutBtn(false);
+                    navigate('/login');
+                } else {
+                    alert('Đăng xuất không thành công, vui lòng thử lại.');
+                }
+            });
+    };
+
+    const toggleLogoutBtn = () => {
+        setShowLogoutBtn(prev => !prev);
+    };
 
     return (
         <div>
@@ -74,7 +113,7 @@ export default function HeaderComponents() {
                             src={logos[logoIndex]}
                             alt="Logo"
                             className={isFading ? 'fade' : ''}
-                            style={{ cursor: 'pointer' }} // thêm con trỏ chuột khi hover
+                            style={{ cursor: 'pointer' }}
                         />
                     </Link>
                 </div>
@@ -101,8 +140,22 @@ export default function HeaderComponents() {
                                 </li>
                             )}
                             {userName && (
-                                <li className='li-login'>
-                                    <span>Xin chào, {userName}</span>
+                                <li className='li-login relative'>
+                                    <span
+                                        style={{ cursor: 'pointer' }}
+                                        onClick={toggleLogoutBtn}
+                                    >
+                                        Xin chào, {userName}
+                                    </span>
+
+                                    {showLogoutBtn && (
+                                        <button
+                                            onClick={handleLogout}
+                                            className="absolute top-full left-0 mt-1 bg-white border border-gray-300 rounded px-3 py-1 text-sm hover:bg-gray-100"
+                                        >
+                                            Đăng xuất
+                                        </button>
+                                    )}
                                 </li>
                             )}
                         </>

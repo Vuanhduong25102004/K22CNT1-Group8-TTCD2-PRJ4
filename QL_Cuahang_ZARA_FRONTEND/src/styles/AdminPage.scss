@@ -1,0 +1,33 @@
+.sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 250px;
+  height: 100vh;
+  z-index: 1000;
+  padding: 0px 20px 0px 20px;
+}
+
+.header-main {
+  margin-left: 250px;
+  min-height: 100vh;
+  width: calc(100% - 250px);
+  overflow-x: hidden;
+  background-color: #F9FAFB;  
+}
+
+.header-main header {
+  position: relative; 
+  padding: 20px 48px 20px 20px;
+   display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap; /* Cho phép xuống dòng */
+  box-sizing: border-box;
+  height: auto;
+  background-color: #ffffff;
+}
+body{
+
+
+}
