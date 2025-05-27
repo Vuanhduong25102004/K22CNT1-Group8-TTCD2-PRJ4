@@ -14,23 +14,23 @@ export default function AppRoutes() {
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/logon" element={<Logon />} />
+
+            {/* Route cha /admin với AdminPage làm layout */}
             <Route
-                path="/admin/*"
+                path="/admin"
                 element={
                     <RequireAuth>
                         <AdminPage />
                     </RequireAuth>
                 }
-            />
-            <Route
-                path="/product"
-                element={
-                    <RequireAuth>
-                        <Products />
-                    </RequireAuth>
-                }
-            />
+            >
+                {/* Các route con (nested routes) */}
+                <Route path="products" element={<Products />} />
+                {/* Các route con khác nếu có */}
+            </Route>
 
+            {/* Nếu bạn muốn route /product riêng lẻ cũng có thể thêm */}
+            {/* <Route path="/product" element={<RequireAuth><Products /></RequireAuth>} /> */}
         </Routes>
     );
 }

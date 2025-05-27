@@ -1,10 +1,14 @@
+
 .slider-wrapper {
-  width: 100vw;
-  max-width: 1808px; /* hoặc kích thước bạn muốn */
-  margin: 0 auto;    /* căn giữa */
-  height: 758px;     /* chiều cao slider */
+  width: 100vw;       /* chiếm toàn bộ chiều ngang viewport */
+  max-width: none;    /* bỏ giới hạn */
+  margin: 0;          /* bỏ margin */
+  height: 758px;
   position: relative;
-  overflow: visible;  /* ẩn phần vượt */
+  overflow: visible;
+  display: flex;
+  justify-content: center;  /* căn giữa nội dung bên trong */
+  box-sizing: border-box;   /* đảm bảo tính toán padding đúng */
 }
 
 .slider-wrapper .swiper {
@@ -15,16 +19,34 @@
 .slider-wrapper .swiper-slide {
   position: relative;
   width: 100%;
-  height: 100%; 
+  height: 100%;
+  display: flex;
+  justify-content: center;   /* căn giữa ngang */
+  align-items: flex-start;       /* căn giữa dọc */
 }
 
-.slider-wrapper .swiper-slide img {
-  width: 80%;          /* giảm chiều rộng xuống 80% container */
-  height: 80%;
+
+.slider-wrapper .swiper-slide img.banner-img {
+  width: 80%;
+  height: auto;         /* duy trì tỉ lệ */
+  max-height: 80%;
   object-fit: contain;
-  max-width: 100vw;     /* không vượt quá viewport */
   display: block;
-  margin: 0 auto;
+  z-index: 1;
+}
+
+/* SVG overlay */
+.slider-wrapper .swiper-slide img.svg-overlay {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  width: 80%;
+  height: auto;
+  max-height: 80%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  user-select: none;
+  z-index: 2;  /* trên ảnh banner */
 }
 
 .slider-wrapper .slide-text {
@@ -42,24 +64,25 @@
 
 .custom-prev,
 .custom-next {
-  position: absolute;
-  top: 50%;
+  position: fixed;      /* hoặc absolute nếu slider full màn hình */
+  top: 50%;            /* canh giữa dọc màn hình */
   transform: translateY(-50%);
-  width: 40px;          /* chiều rộng nút */
-  height: 40px;         /* chiều cao nút */
+  width: 30px;
+  height: 30px;
   background: transparent;
   border: none;
   cursor: pointer;
-  z-index: 9999;        /* đảm bảo nổi trên các phần tử khác */
+  z-index: 9999;
 }
 
 .custom-prev {
-  left: 10px;           /* căn nút sang trái */
+  left: 50px;          /* cách lề trái 10px */
 }
 
 .custom-next {
-  right: 10px;          /* căn nút sang phải */
+  right: 50px;         /* cách lề phải 10px */
 }
+
 
 .custom-prev img,
 .custom-next img {
