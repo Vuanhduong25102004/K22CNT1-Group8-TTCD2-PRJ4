@@ -29,6 +29,11 @@ public class SanPham {
     @Column(name = "HinhAnh", length = 255)
     private String hinhAnh;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "MaDanhMuc", referencedColumnName = "MaDanhMuc")
+    private DanhMuc danhMuc;
+
+
     public SanPham() {
         // Constructor mặc định
     }
@@ -84,6 +89,14 @@ public class SanPham {
 
     public void setHinhAnh(String hinhAnh) {
         this.hinhAnh = hinhAnh;
+    }
+
+    public DanhMuc getDanhMuc() {
+        return danhMuc;
+    }
+
+    public void setDanhMuc(DanhMuc danhMuc) {
+        this.danhMuc = danhMuc;
     }
 
 }
