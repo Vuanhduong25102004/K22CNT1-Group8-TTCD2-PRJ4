@@ -34,6 +34,7 @@ export default function Products() {
                         <th className="px-4 py-2 border-b border-gray-300">Giá (VNĐ)</th>
                         <th className="px-4 py-2 border-b border-gray-300">Số lượng tồn</th>
                         <th className="px-4 py-2 border-b border-gray-300">Hình ảnh</th>
+                        <th className="px-4 py-2 border-b border-gray-300">Danh mục</th>
                         <th className="px-4 py-2 border-b border-gray-300">Sửa</th>
                         <th className="px-4 py-2 border-b border-gray-300">Xóa</th>
                     </tr>
@@ -53,6 +54,7 @@ export default function Products() {
                                     className="w-20 h-auto"
                                 />
                             </td>
+                            <td className="px-4 py-2 border-b border-gray-300">{p.danhMuc?.maDanhMuc}</td>
                             <td className="px-4 py-2 border-b border-gray-300"><button><CiEdit size={30} /></button></td>
                             <td className="px-4 py-2 border-b border-gray-300"><button><CiTrash size={30} /></button></td>
                         </tr>

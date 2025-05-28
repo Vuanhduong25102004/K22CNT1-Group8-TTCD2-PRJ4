@@ -51,7 +51,6 @@ export default function HeaderComponents() {
             if (token) {
                 try {
                     const decoded = jwtDecode(token);
-                    console.log("Decoded token:", decoded); // Debug xem token có trường gì
                     const hoTen = decoded.hoTen || decoded.name || decoded.username || null;
                     setUserName(hoTen);
                 } catch (e) {

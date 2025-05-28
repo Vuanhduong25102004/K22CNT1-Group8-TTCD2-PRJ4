@@ -7,6 +7,7 @@
   position: relative;
   overflow: visible;
   display: flex;
+  flex-direction: column;
   justify-content: center;  /* căn giữa nội dung bên trong */
   box-sizing: border-box;   /* đảm bảo tính toán padding đúng */
 }
@@ -89,4 +90,15 @@
   width: 100%;
   height: 100%;
   display: block;
+}
+
+
+.fade-in {
+  opacity: 1;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.fade-out {
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
 }
