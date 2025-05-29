@@ -14,7 +14,7 @@ header {
   align-items: flex-start;
   padding: 20px 48px;
   gap: 20px;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
 }
 
 .logo img {
@@ -93,3 +93,24 @@ header {
   }
 }
 
+.ul-category-menu {
+  width: 100%;             /* Cho ul rộng full hàng mới */
+  display: flex;           /* Hiển thị dạng flex theo hàng ngang */
+  justify-content: flex-start;  /* Căn trái (có thể thay center hay space-around) */
+  padding-left: 48px;      /* Căn thẳng với logo (theo padding logo) */
+  margin-top: 10px;        /* Khoảng cách trên để không sát logo */
+  list-style: none;
+  margin-top: 50px;
+  gap: 20px;               /* Khoảng cách giữa các mục */
+}
+
+.ul-category-menu li a span {
+  font-size: 13px;
+  text-transform: uppercase;
+  color: #000; /* hoặc màu bạn muốn */
+  cursor: pointer;
+}
+
+.ul-category-menu li a:hover span {
+  text-decoration: underline;
+}

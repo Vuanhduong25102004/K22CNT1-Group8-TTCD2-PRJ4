@@ -1,0 +1,29 @@
+.products-container {
+  display: grid;
+  grid-template-columns: repeat(5, 237px); /* 5 cột cố định 237px */
+  gap: 120px;                               /* Khoảng cách ngang và dọc */
+  margin: 120px auto;                      /* căn giữa container nếu container rộng hơn */
+  justify-content: center;                 /* căn giữa toàn bộ grid */
+}
+.product-card{
+    height: 408px;
+    width: 237px;
+}
+
+.product-card img {
+
+}
+.product-card h3 {
+  margin: 12px 0 6px;
+  font-size: 18px;
+}
+
+.product-card p {
+  margin-bottom: 8px;
+  color: #555;
+}
+
+.product-card p.price {
+  font-weight: bold;
+  color: #000;
+}

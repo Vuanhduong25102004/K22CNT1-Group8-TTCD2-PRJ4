@@ -1,29 +1,116 @@
-body{
-    font-family: "Neue Helvetica", Helvetica, Arial, sans-serif;
-    font-size: 13px;
-}
-footer{
-    display: flex;
-    flex-direction: column; 
-    justify-content: center; 
-    align-items: center;     
+footer {
+  margin: 0 56px;    
+  position: relative;
+
+  /* Bỏ display:flex ở footer, dùng .footerservice để flex */
 }
 
-.footerinfo2 ul ,
-.footerinfo3 ul {
+/* .footerservice bọc 3 phần info */
+.footerservice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  margin-bottom: 40px;
+}
+
+/* .footerinfo2 nằm bên trái */
+.footerservice .footerinfo2 {
+  flex: 1;
+  display: flex;
+  justify-content: flex-start;
+}
+
+/* .footerinfo3 nằm bên phải */
+.footerservice .footerinfo3 {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* .footerinfo1 nằm giữa, vị trí tuyệt đối căn giữa .footerservice */
+.footerservice .footerinfo1 {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  padding: 8px 0;
+  text-align: center;
+  pointer-events: none;
+}
+
+/* Giữ nguyên phần còn lại */
+.footerservice .footerinfo2 ul,
+.footerservice .footerinfo3 ul {
   display: flex;    
   gap: 15px;           
   padding: 0;
   margin: 0;
   list-style: none;     
 }
-.footerinfo1{
-    padding: 8px 0px;
-}
-.footerinfo3 ul li {
-    padding: 8px 0px;
+
+.footerservice .footerinfo3 ul li {
+  padding: 8px 0px;
 }
 
-.footerinfo3{
-    margin-top: 32px;
+.footerservice .footerinfo1,
+.footerservice .footerinfo2,
+.footerservice .footerinfo3 ul > li > a {
+  font-size: 13px;
+  color: #2c2c2c;
+  font-weight: 500;
+}
+
+
+footer > .footerinfo {
+  margin-top: 24px; 
+}
+
+@media (max-width: 1910px) {
+  body {
+    font-family: "Neue Helvetica", Helvetica, Arial, sans-serif;
+    font-size: 13px;
+  }
+  footer {
+    padding: 0 20px;
+  }
+  .footerservice {
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  .footerservice .footerinfo1 {
+    position: static;
+    transform: none;
+    pointer-events: auto;
+    white-space: normal;
+    text-align: center;
+    margin-bottom: 16px;
+  }
+}
+
+.footerinfo{
+  margin-bottom: 40px;
+  max-width: 723px;
+}
+.footerinfo ul>li{
+  font-size: 12px;
+  font-weight: 100;
+  opacity: 0.7;
+  text-transform: uppercase;
+}
+.footerinfo ul>li>a{
+  font-weight: 750;
+}
+.footerinfo ul>li>a:hover{
+  font-weight: 750;
+  text-decoration: underline;
+
+}
+
+.footerinfo p{
+  font-size: 12px;
+  font-weight: 750;
+  text-transform: uppercase;
+
 }

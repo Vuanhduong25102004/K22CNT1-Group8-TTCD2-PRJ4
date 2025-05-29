@@ -1,0 +1,18 @@
+.search-home-input {
+  width: 583px;
+  height: 45px;              
+  padding: 12px 54px;         
+  box-sizing: border-box;   
+  text-align: center;      
+
+  border-bottom: 1px solid gray; 
+}
+
+.search-home-input:focus {
+  outline: none;   
+  border-bottom: none;
+}
+
+input::placeholder{
+    text-transform: uppercase;
+}

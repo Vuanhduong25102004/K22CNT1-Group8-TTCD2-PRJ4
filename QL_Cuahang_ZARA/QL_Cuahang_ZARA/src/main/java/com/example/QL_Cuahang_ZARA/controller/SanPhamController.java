@@ -6,8 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -21,12 +23,12 @@ public class SanPhamController {
     // Tạo sản phẩm mới
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)  // Trả về mã trạng thái 201 khi tạo thành công
-    public SanPham createSanPham(@RequestBody SanPham sanPham) {
-        try {
-            return sanPhamService.createSanPham(sanPham);  // Tạo sản phẩm mới
-        } catch (RuntimeException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
+    public SanPham createSanPham(
+            @RequestPart("sanPham") SanPham sanPham,
+            @RequestPart("image") MultipartFile image) throws IOException {
+        String fileName = sanPhamService.saveImage(image);
+        sanPham.setHinhAnh(fileName);
+        return sanPhamService.createSanPham(sanPham);
     }
 
     // Lấy danh sách tất cả sản phẩm
@@ -47,12 +49,15 @@ public class SanPhamController {
 
     // Cập nhật sản phẩm
     @PutMapping("/{id}")
-    public SanPham updateSanPham(@PathVariable("id") Integer id, @RequestBody SanPham sanPham) {
-        try {
-            return sanPhamService.updateSanPham(id, sanPham);  // Cập nhật sản phẩm theo ID
-        } catch (RuntimeException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+    public SanPham updateSanPham(
+            @PathVariable Integer id,
+            @RequestPart("sanPham") SanPham sanPham,
+            @RequestPart(value = "image", required = false) MultipartFile image) throws IOException {
+        if (image != null && !image.isEmpty()) {
+            String fileName = sanPhamService.saveImage(image);
+            sanPham.setHinhAnh(fileName);
         }
+        return sanPhamService.updateSanPham(id, sanPham);
     }
 
     // Xóa sản phẩm

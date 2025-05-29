@@ -24,6 +24,26 @@ export default function HeaderComponents() {
 
     const hideLogin = location.pathname === '/logon';
 
+    const [isHomePage, setIsHomePage] = useState(false);
+    const [isSearchPage, setIsSearchPage] = useState(true);
+    const [isProductDetail, setIsProductDetail] = useState(false)
+
+    //cập nhật isProductDetail khi path thay đổi
+    useEffect(() => {
+        setIsProductDetail(location.pathname.startsWith('/product/'));
+    }, [location.pathname])
+
+    //cập nhật isSearchPage khi path thay dổi
+    useEffect(() => {
+        setIsSearchPage(location.pathname === '/home/search')
+    }, [location.pathname])
+
+    // cập nhật isHomePage khi path thay đổi
+    useEffect(() => {
+        setIsHomePage(location.pathname === '/');
+    }, [location.pathname]);
+
+
     useEffect(() => {
         const handleResize = () => {
             setIsMobile(window.innerWidth <= breakpoint);
@@ -107,14 +127,14 @@ export default function HeaderComponents() {
                     />
                 </button>
                 <div className='logo'>
-                    <Link to="/">
+                    {!isProductDetail && (<Link to="/">
                         <img
                             src={logos[logoIndex]}
                             alt="Logo"
                             className={isFading ? 'fade' : ''}
                             style={{ cursor: 'pointer' }}
                         />
-                    </Link>
+                    </Link>)}
                 </div>
                 <ul className='ul-search-login-help-shoppingbag'>
                     {isMobile ? (
@@ -130,9 +150,9 @@ export default function HeaderComponents() {
                         </>
                     ) : (
                         <>
-                            <li className='li-search'>
-                                <a href='#'><span className='span-search'>TÌM KIẾM</span></a>
-                            </li>
+                            {!isSearchPage && (<li className='li-search'>
+                                <a href='/home/search'><span className='span-search'>TÌM KIẾM</span></a>
+                            </li>)}
                             {!userName && !hideLogin && (
                                 <li className='li-login'>
                                     <Link to='/logon'>ĐĂNG NHẬP</Link>
@@ -168,6 +188,13 @@ export default function HeaderComponents() {
                         {isMobile ? <HiOutlineShoppingBag size={22} /> : <a href="">GIỎ</a>}
                     </li>
                 </ul>
+                {!isHomePage && (
+                    <ul className="ul-category-menu">
+                        <li><a href='#'><span>Nam</span></a></li>
+                        <li><a href='#'><span>Nữ</span></a></li>
+                        <li><a href='#'><span>Trẻ em</span></a></li>
+                    </ul>
+                )}
             </header>
         </div>
     );

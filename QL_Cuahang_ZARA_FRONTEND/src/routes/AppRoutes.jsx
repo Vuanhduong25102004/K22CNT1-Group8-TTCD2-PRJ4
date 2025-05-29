@@ -4,9 +4,11 @@ import { Routes, Route } from 'react-router-dom';
 import Home from '../pages/Home';
 import Login from '../pages/Login';
 import Logon from '../pages/Logon';
+import HomeProducts from '../pages/HomeProducts'
 import RequireAuth from '../components/RequireAuth';
 import AdminPage from '../pages/AdminPage';
 import Products from '../components/Products';
+import ProductDetail from '../components/ProductDetail';
 
 export default function AppRoutes() {
     return (
@@ -14,7 +16,8 @@ export default function AppRoutes() {
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/logon" element={<Logon />} />
-
+            <Route path='/home/search' element={<HomeProducts />} />
+            <Route path="/product/:id" element={<ProductDetail />} />
             {/* Route cha /admin với AdminPage làm layout */}
             <Route
                 path="/admin"
