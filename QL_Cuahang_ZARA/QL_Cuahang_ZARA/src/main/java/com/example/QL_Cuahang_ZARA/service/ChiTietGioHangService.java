@@ -1,7 +1,10 @@
 package com.example.QL_Cuahang_ZARA.service;
 
+import com.example.QL_Cuahang_ZARA.dto.request.ThemSanPhamVaoGioHangRequest;
+import com.example.QL_Cuahang_ZARA.dto.response.ChiTietGioHangDto;
 import com.example.QL_Cuahang_ZARA.model.ChiTietGioHang;
 import com.example.QL_Cuahang_ZARA.model.GioHang;
+import com.example.QL_Cuahang_ZARA.model.NguoiDung;
 import com.example.QL_Cuahang_ZARA.model.SanPham;
 import com.example.QL_Cuahang_ZARA.repository.ChiTietGioHangRepository;
 import com.example.QL_Cuahang_ZARA.repository.GioHangRepository;
@@ -24,8 +27,22 @@ public class ChiTietGioHangService {
 
 
     // Trả về danh sách sản phẩm trong giỏ hàng
-    public List<ChiTietGioHang> getChiTiet(Integer maGioHang){
-        return chiTietGioHangRepository.findByGioHang_MaGioHang(maGioHang);
+    public List<ChiTietGioHangDto> getChiTiet(Integer maGioHang) {
+        return chiTietGioHangRepository.findByGioHang_MaGioHang(maGioHang)
+                .stream()
+                .map(this::convertToDto)
+                .toList();
+    }
+
+    private ChiTietGioHangDto convertToDto(ChiTietGioHang ct) {
+        return ChiTietGioHangDto.builder()
+                .maChiTietGioHang(ct.getMaChiTietGioHang())
+                .maSanPham(ct.getSanPham().getMaSanPham())
+                .tenSanPham(ct.getSanPham().getTenSanPham())
+                .gia(ct.getSanPham().getGia())
+                .soLuong(ct.getSoLuong())
+                .hinhAnh(ct.getSanPham().getHinhAnh())
+                .build();
     }
 
 
@@ -63,5 +80,24 @@ public class ChiTietGioHangService {
         ChiTietGioHang ct = chiTietGioHangRepository.findById(maChiTiet).orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm trong giỏ hàng"));
         ct.setSoLuong(soLuong);
         return chiTietGioHangRepository.save(ct);
+    }
+
+    public List<ChiTietGioHangDto> themNhieuSanPhamVaoGio(ThemSanPhamVaoGioHangRequest request) {
+        GioHang gioHang = gioHangRepository.findByNguoiDung_MaNguoiDung(request.getMaNguoiDung());
+        if (gioHang == null) {
+            gioHang = new GioHang();
+            NguoiDung nguoiDung = new NguoiDung();
+            nguoiDung.setMaNguoiDung(request.getMaNguoiDung());
+            gioHang.setNguoiDung(nguoiDung);
+            gioHang.setNgayCapNhat(java.time.LocalDateTime.now());
+            gioHang = gioHangRepository.save(gioHang);
+        }
+
+        Integer maGioHangFinal = gioHang.getMaGioHang();
+
+        return request.getDanhSachSanPham().stream()
+                .map(sp -> themHoacTangSanPham(maGioHangFinal, sp.getMaSanPham(), sp.getSoLuong()))
+                .map(this::convertToDto)
+                .toList();
     }
 }
