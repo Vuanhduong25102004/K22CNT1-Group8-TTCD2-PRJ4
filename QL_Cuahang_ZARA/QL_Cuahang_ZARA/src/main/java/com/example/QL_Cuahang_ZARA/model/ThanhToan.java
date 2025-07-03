@@ -29,5 +29,7 @@ public class ThanhToan {
     Date NgayThanhToan;
 
     String MaQR;
-    String TrangThai;
+
+    @Column(nullable = false)
+    String TrangThai = "Đang xử lý";
 }

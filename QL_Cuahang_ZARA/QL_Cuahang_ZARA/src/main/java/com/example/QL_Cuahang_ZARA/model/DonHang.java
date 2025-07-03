@@ -30,8 +30,11 @@ public class DonHang {
     @JoinColumn(name = "MaPhuongThuc", nullable = false)
     PhuongThucThanhToan phuongThucThanhToan;
 
-    String TrangThaiThanhToan;
-    String TrangThaiDonHang;
+    @Column(nullable = false)
+    String TrangThaiThanhToan = "Chưa thanh toán";
+
+    @Column(nullable = false)
+    String TrangThaiDonHang = "Chờ xác nhận";
 
     @Column(name = "NgayDat")
     Date NgayDat;

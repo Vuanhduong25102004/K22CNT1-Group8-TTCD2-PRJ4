@@ -14,6 +14,13 @@ public class DonHangService {
     private DonHangRepository donHangRepository;
 
     public DonHang themDonHang(DonHang donHang) {
+        if (donHang.getTrangThaiThanhToan() == null) {
+            donHang.setTrangThaiThanhToan("Chờ thanh toán");
+        }
+        if (donHang.getTrangThaiDonHang() == null) {
+            donHang.setTrangThaiDonHang("Chờ xác nhận");
+        }
+
         return donHangRepository.save(donHang);
     }
 

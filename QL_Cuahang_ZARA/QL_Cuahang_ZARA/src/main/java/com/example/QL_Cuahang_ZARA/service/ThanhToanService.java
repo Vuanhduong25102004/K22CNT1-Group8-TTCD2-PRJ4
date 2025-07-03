@@ -14,6 +14,9 @@ public class ThanhToanService {
     private ThanhToanRepository thanhToanRepository;
 
     public ThanhToan themThanhToan(ThanhToan thanhToan) {
+        if (thanhToan.getTrangThai() == null) {
+            thanhToan.setTrangThai("Đang xử lý");
+        }
         return thanhToanRepository.save(thanhToan);
     }
 

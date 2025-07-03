@@ -20,6 +20,11 @@ export default function ProductsListComponents() {
             });
     }, []);
 
+    // Hàm để cuộn trang lên đầu
+    const handleProductClick = () => {
+        window.scrollTo(0, 0);  // Cuộn lên đầu trang
+    };
+
     if (loading) return <div>Đang tải sản phẩm...</div>;
     if (error) return <div>{error}</div>;
 
@@ -30,6 +35,7 @@ export default function ProductsListComponents() {
                     key={product.maSanPham}   // Dùng maSanPham làm key
                     to={`/product/${product.maSanPham}`}  // Dùng maSanPham làm param
                     className="product-link"
+                    onClick={handleProductClick}
                 >
                     <div className="product-card">
                         <img
@@ -37,7 +43,6 @@ export default function ProductsListComponents() {
                             alt={product.tenSanPham}
                         />
                         <h3>{product.tenSanPham}</h3>
-                        <p>{product.moTa}</p>
                         <p className="price">
                             {product.gia.toLocaleString('vi-VN', { style: 'currency', currency: 'VND' })}
                         </p>

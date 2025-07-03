@@ -1,12 +1,14 @@
 package com.example.QL_Cuahang_ZARA.repository;
 
+
 import com.example.QL_Cuahang_ZARA.model.ChiTietGioHang;
+import com.example.QL_Cuahang_ZARA.model.GioHang;
+import com.example.QL_Cuahang_ZARA.model.SanPham;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import java.util.Optional;
 
-@Repository
 public interface ChiTietGioHangRepository extends JpaRepository<ChiTietGioHang, Integer> {
-    List<ChiTietGioHang> findByGioHang_MaGioHang(Integer MaGioHang);
+    Optional<ChiTietGioHang> findByGioHangAndSanPham(GioHang gioHang, SanPham sanPham);
+
 }

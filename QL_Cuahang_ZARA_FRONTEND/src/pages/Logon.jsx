@@ -13,6 +13,10 @@ export default function Logon() {
         navigate('/login');  // chuyển sang route /login
     };
 
+    const handleRegisterClick = () => {
+        navigate('/register')
+    };
+
     return (
         <main style={{ paddingTop: '213px' }}>
             <HeaderComponents />
@@ -30,7 +34,7 @@ export default function Logon() {
                                 <button className="btn btn-login" onClick={handleLoginClick}>
                                     LOG IN
                                 </button>
-                                <button className="btn btn-register">
+                                <button className="btn btn-register" onClick={handleRegisterClick}>
                                     REGISTER
                                 </button>
                             </div>

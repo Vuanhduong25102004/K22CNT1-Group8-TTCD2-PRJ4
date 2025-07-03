@@ -13,7 +13,7 @@ const logos = [Logo1, Logo2];
 
 export default function HeaderComponents() {
     const location = useLocation();
-    const navigate = useNavigate(); // Thêm khai báo navigate
+    const navigate = useNavigate();
 
     const [showLogoutBtn, setShowLogoutBtn] = useState(false);
     const [userName, setUserName] = useState(null);
@@ -24,25 +24,21 @@ export default function HeaderComponents() {
 
     const hideLogin = location.pathname === '/logon';
 
-    const [isHomePage, setIsHomePage] = useState(false);
-    const [isSearchPage, setIsSearchPage] = useState(true);
-    const [isProductDetail, setIsProductDetail] = useState(false)
+    const [pageStates, setPageStates] = useState({
+        isHomePage: false,
+        isSearchPage: false,
+        isProductDetail: false,
+        isLogout: false,
+    });
 
-    //cập nhật isProductDetail khi path thay đổi
     useEffect(() => {
-        setIsProductDetail(location.pathname.startsWith('/product/'));
-    }, [location.pathname])
-
-    //cập nhật isSearchPage khi path thay dổi
-    useEffect(() => {
-        setIsSearchPage(location.pathname === '/home/search')
-    }, [location.pathname])
-
-    // cập nhật isHomePage khi path thay đổi
-    useEffect(() => {
-        setIsHomePage(location.pathname === '/');
+        setPageStates({
+            isHomePage: location.pathname === '/',
+            isSearchPage: location.pathname === '/home/search',
+            isProductDetail: location.pathname.startsWith('/product/'),
+            isLogout: location.pathname === '/logout',
+        });
     }, [location.pathname]);
-
 
     useEffect(() => {
         const handleResize = () => {
@@ -71,7 +67,7 @@ export default function HeaderComponents() {
             if (token) {
                 try {
                     const decoded = jwtDecode(token);
-                    const hoTen = decoded.hoTen || decoded.name || decoded.username || null;
+                    const hoTen = decoded.hoTen;
                     setUserName(hoTen);
                 } catch (e) {
                     setUserName(null);
@@ -116,6 +112,8 @@ export default function HeaderComponents() {
         setShowLogoutBtn(prev => !prev);
     };
 
+    const { isHomePage, isSearchPage, isProductDetail, isLogout } = pageStates;
+
     return (
         <div>
             <header>
@@ -127,14 +125,16 @@ export default function HeaderComponents() {
                     />
                 </button>
                 <div className='logo'>
-                    {!isProductDetail && (<Link to="/">
-                        <img
-                            src={logos[logoIndex]}
-                            alt="Logo"
-                            className={isFading ? 'fade' : ''}
-                            style={{ cursor: 'pointer' }}
-                        />
-                    </Link>)}
+                    {!isProductDetail && (
+                        <Link to="/">
+                            <img
+                                src={logos[logoIndex]}
+                                alt="Logo"
+                                className={isFading ? 'fade' : ''}
+                                style={{ cursor: 'pointer' }}
+                            />
+                        </Link>
+                    )}
                 </div>
                 <ul className='ul-search-login-help-shoppingbag'>
                     {isMobile ? (
@@ -150,9 +150,11 @@ export default function HeaderComponents() {
                         </>
                     ) : (
                         <>
-                            {!isSearchPage && (<li className='li-search'>
-                                <a href='/home/search'><span className='span-search'>TÌM KIẾM</span></a>
-                            </li>)}
+                            {!isSearchPage && (
+                                <li className='li-search'>
+                                    <a href='/home/search'><span className='span-search'>TÌM KIẾM</span></a>
+                                </li>
+                            )}
                             {!userName && !hideLogin && (
                                 <li className='li-login'>
                                     <Link to='/logon'>ĐĂNG NHẬP</Link>
@@ -185,10 +187,11 @@ export default function HeaderComponents() {
                         </li>
                     )}
                     <li className='li-shoppingbag'>
-                        {isMobile ? <HiOutlineShoppingBag size={22} /> : <a href="">GIỎ</a>}
+                        {isMobile ? <HiOutlineShoppingBag size={22} /> : <Link to="/mycart">GIỎ</Link>}
                     </li>
                 </ul>
-                {!isHomePage && (
+
+                {isSearchPage && (
                     <ul className="ul-category-menu">
                         <li><a href='#'><span>Nam</span></a></li>
                         <li><a href='#'><span>Nữ</span></a></li>

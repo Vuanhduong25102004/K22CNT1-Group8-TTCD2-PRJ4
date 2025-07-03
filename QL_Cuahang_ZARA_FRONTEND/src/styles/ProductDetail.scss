@@ -1,0 +1,37 @@
+.product-detail {
+    margin: 0px 120px;
+    display: flex;
+    height: 100vh;
+}
+
+.product-img {
+    display: flex;
+}
+
+.product-img img {
+    height: 100%;
+    width: auto;
+    max-width: 100%;
+    object-fit: contain;
+    padding-left: 135px;
+}
+
+.product-info {
+    padding-left: 172px;
+    margin-top: 308px;
+    height: auto;
+    width: 700px;
+}
+.tittle{
+    margin: 0px 120px;
+}
+.tittle h2{
+    margin: 120px 0px;
+    padding-top: 160px;
+}
+.tittle span{
+    text-transform: uppercase;
+}
+.btnaddtocart{
+    border: 1px solid black;
+}

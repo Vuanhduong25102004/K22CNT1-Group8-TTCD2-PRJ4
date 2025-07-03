@@ -54,7 +54,7 @@ public class NguoiDung {
     }
 
     public void setMaNguoiDung(Integer maNguoiDung) {
-        maNguoiDung = maNguoiDung;
+        this.maNguoiDung = maNguoiDung;
     }
 
     public String getHoTen() {
