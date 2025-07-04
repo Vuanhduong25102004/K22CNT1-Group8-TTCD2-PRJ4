@@ -1,9 +1,41 @@
-import React from 'react'
+import React, { useState } from 'react'
 import HeaderComponents from '../components/HeaderComponents';
 import FooterComponents from '../components/FooterComponents';
+import { useNavigate } from "react-router-dom";
 import '../styles/Register.scss';
+import { createNguoiDung } from '../services/RegisterService';
 
 function Register() {
+    const [formData, setFormData] = useState({
+        hoTen: '',
+        email: '',
+        matKhau: '',
+    });
+
+    const navigate = useNavigate();
+
+    const [message, setMessage] = useState('');
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        try {
+            const result = await createNguoiDung(formData);
+            setMessage('Tạo tài khoản thành công');
+            navigate("/");
+        } catch (error) {
+            setMessage(error);
+        }
+    }
+
     return (
         <main style={{ paddingTop: '213px' }}>
             <HeaderComponents />
@@ -11,16 +43,17 @@ function Register() {
                 <main className="form-register">
                     <div className="register-container">
                         <div className="register-left">
-                            <form action="">
+                            <form onSubmit={handleSubmit}>
                                 <h2 style={{ paddingBottom: '50px' }}>THÔNG TIN CÁ NHÂN</h2>
                                 <div className='register-form-body'>
                                     <div>
                                         <div className='input-group'>
                                             <input
-                                                id='hoten'
-                                                name='hoten'
+                                                id='hoTen'
+                                                name='hoTen'
                                                 type='text'
                                                 required
+                                                onChange={handleChange}
                                                 placeholder=" "
                                             />
                                             <label htmlFor="hoten">HỌ TÊN</label>
@@ -33,6 +66,7 @@ function Register() {
                                                 name="email"
                                                 type="email"
                                                 required
+                                                onChange={handleChange}
                                                 placeholder=" "
                                             />
                                             <label htmlFor="email">EMAIL</label>
@@ -41,10 +75,11 @@ function Register() {
                                     <div>
                                         <div className="input-group">
                                             <input
-                                                id="password"
-                                                name="password"
+                                                id="matKhau"
+                                                name="matKhau"
                                                 type="password"
                                                 required
+                                                onChange={handleChange}
                                                 placeholder=" "
                                             />
                                             <label htmlFor="password">PASSWORD</label>
