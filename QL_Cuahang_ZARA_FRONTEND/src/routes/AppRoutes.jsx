@@ -10,7 +10,7 @@ import RequireAuth from '../components/RequireAuth';
 import AdminPage from '../pages/AdminPage';
 import Products from '../components/Products';
 import ProductDetail from '../components/ProductDetail';
-import MyCart from '../components/MyCart';
+import MyCart from '../pages/MyCart';
 
 export default function AppRoutes() {
     return (

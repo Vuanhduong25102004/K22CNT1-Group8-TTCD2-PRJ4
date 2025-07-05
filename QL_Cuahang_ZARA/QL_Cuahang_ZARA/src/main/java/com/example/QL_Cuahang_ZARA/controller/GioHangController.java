@@ -1,6 +1,7 @@
 package com.example.QL_Cuahang_ZARA.controller;
 
 import com.example.QL_Cuahang_ZARA.dto.request.GioHangRequest;
+import com.example.QL_Cuahang_ZARA.dto.response.ChiTietGioHangResponse;
 import com.example.QL_Cuahang_ZARA.model.GioHang;
 import com.example.QL_Cuahang_ZARA.service.GioHangService;
 import com.nimbusds.jose.JOSEException;
@@ -31,21 +32,15 @@ public class GioHangController {
         }
     }
     @GetMapping("/mycart")
-    public ResponseEntity<GioHang> getGioHangUser(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<List<ChiTietGioHangResponse>> getChiTietGioHang(@RequestHeader("Authorization") String token) {
         try {
-            // Lấy maNguoiDung từ token JWT
             int maNguoiDung = getMaNguoiDungFromToken(token);
 
-            // Kiểm tra giỏ hàng của người dùng
-            GioHang gioHang = gioHangService.getGioHangByUser(maNguoiDung);
-            if (gioHang == null) {
-                return ResponseEntity.status(404).body(null);  // Nếu không có giỏ hàng, trả về lỗi 404
-            }
-
-            return ResponseEntity.ok(gioHang);
+            List<ChiTietGioHangResponse> response = gioHangService.getChiTietGioHangByMaNguoiDung(maNguoiDung);
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
-            e.printStackTrace();  // In thêm thông tin lỗi
-            return ResponseEntity.status(500).body(null);  // Trả về lỗi 500 nếu có vấn đề
+            e.printStackTrace();
+            return ResponseEntity.status(500).body(null);
         }
     }
 

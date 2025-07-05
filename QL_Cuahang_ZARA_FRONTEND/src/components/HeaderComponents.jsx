@@ -121,7 +121,7 @@ export default function HeaderComponents() {
                     <img
                         src={MenuIcon}
                         alt="Menu Icon"
-                        style={{ width: isMobile ? 40 : 80, height: isMobile ? 40 : 80 }}
+                        style={{ width: isMobile ? 25 : 65, height: isMobile ? 25 : 65 }}
                     />
                 </button>
                 <div className='logo'>
@@ -166,7 +166,7 @@ export default function HeaderComponents() {
                                         style={{ cursor: 'pointer' }}
                                         onClick={toggleLogoutBtn}
                                     >
-                                        Xin chào, {userName}
+                                        {userName}
                                     </span>
 
                                     {showLogoutBtn && (

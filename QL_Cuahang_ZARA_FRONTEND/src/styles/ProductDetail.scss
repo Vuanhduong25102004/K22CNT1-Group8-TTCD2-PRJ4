@@ -34,4 +34,10 @@
 }
 .btnaddtocart{
     border: 1px solid black;
+    padding: 12px 24px;      /* tăng padding dọc và ngang */
+    font-size: 1.2rem; 
+    min-height: 40px;      /* chữ to hơn */
+    min-width: 280px;        /* chiều rộng tối thiểu */
+    cursor: pointer;         /* con trỏ chuột khi hover */
+    transition: background-color 0.3s ease;
 }

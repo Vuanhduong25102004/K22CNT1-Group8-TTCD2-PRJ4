@@ -1,5 +1,6 @@
 package com.example.QL_Cuahang_ZARA.service;
 
+import com.example.QL_Cuahang_ZARA.dto.response.ChiTietGioHangResponse;
 import com.example.QL_Cuahang_ZARA.model.ChiTietGioHang;
 import com.example.QL_Cuahang_ZARA.model.GioHang;
 import com.example.QL_Cuahang_ZARA.model.NguoiDung;
@@ -81,5 +82,28 @@ public class GioHangService {
 
             chiTietGioHangRepository.save(newChiTietGioHang); // Lưu chi tiết giỏ hàng mới
         }
+    }
+    public List<ChiTietGioHangResponse> getChiTietGioHangByMaNguoiDung(int maNguoiDung){
+        GioHang gioHang = gioHangRepository.findByNguoiDung_maNguoiDung(maNguoiDung);
+        if (gioHang == null) {
+            throw new RuntimeException("Người dùng chưa có giỏ hàng");
+        }
+
+        List<ChiTietGioHang> chiTietList = chiTietGioHangRepository.findByGioHang(gioHang);
+
+        List<ChiTietGioHangResponse> result = new java.util.ArrayList<>();
+        for (ChiTietGioHang ct : chiTietList){
+            SanPham sp = ct.getSanPham();
+            ChiTietGioHangResponse dto = ChiTietGioHangResponse.builder()
+                    .maSanPham(sp.getMaSanPham())
+                    .tenSanPham(sp.getTenSanPham())
+                    .soLuong(ct.getSoLuong())
+                    .gia(sp.getGia())
+                    .hinhAnh(sp.getHinhAnh())
+                    .thanhTien(sp.getGia().multiply(java.math.BigDecimal.valueOf(ct.getSoLuong())))
+                    .build();
+            result.add(dto);
+        }
+        return result;
     }
 }
