@@ -1,7 +1,9 @@
 package com.example.QL_Cuahang_ZARA.controller;
 
 import com.example.QL_Cuahang_ZARA.dto.request.GioHangRequest;
+import com.example.QL_Cuahang_ZARA.dto.request.UpdateGioHangRequest;
 import com.example.QL_Cuahang_ZARA.dto.response.ChiTietGioHangResponse;
+import com.example.QL_Cuahang_ZARA.dto.response.GioHangResponse;
 import com.example.QL_Cuahang_ZARA.model.GioHang;
 import com.example.QL_Cuahang_ZARA.service.GioHangService;
 import com.nimbusds.jose.JOSEException;
@@ -32,11 +34,10 @@ public class GioHangController {
         }
     }
     @GetMapping("/mycart")
-    public ResponseEntity<List<ChiTietGioHangResponse>> getChiTietGioHang(@RequestHeader("Authorization") String token) {
+    public ResponseEntity<GioHangResponse> getChiTietGioHang(@RequestHeader("Authorization") String token) {
         try {
             int maNguoiDung = getMaNguoiDungFromToken(token);
-
-            List<ChiTietGioHangResponse> response = gioHangService.getChiTietGioHangByMaNguoiDung(maNguoiDung);
+            GioHangResponse response = gioHangService.getChiTietGioHangByMaNguoiDung(maNguoiDung);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             e.printStackTrace();
@@ -95,6 +96,16 @@ public class GioHangController {
             // Catch all other exceptions
             e.printStackTrace();  // In thêm lỗi để debug
             throw new RuntimeException("Error while processing JWT", e);
+        }
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<String> updateQuantity(@RequestBody UpdateGioHangRequest request) {
+        try {
+            gioHangService.updateQuantity(request.getMaNguoiDung(), request.getMaSanPham(), request.getSoLuongMoi());
+            return ResponseEntity.ok("Cập nhật số lượng thành công");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Cập nhật thất bại: " + e.getMessage());
         }
     }
 

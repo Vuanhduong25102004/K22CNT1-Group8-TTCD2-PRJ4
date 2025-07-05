@@ -1,6 +1,7 @@
 package com.example.QL_Cuahang_ZARA.service;
 
 import com.example.QL_Cuahang_ZARA.dto.response.ChiTietGioHangResponse;
+import com.example.QL_Cuahang_ZARA.dto.response.GioHangResponse;
 import com.example.QL_Cuahang_ZARA.model.ChiTietGioHang;
 import com.example.QL_Cuahang_ZARA.model.GioHang;
 import com.example.QL_Cuahang_ZARA.model.NguoiDung;
@@ -12,6 +13,7 @@ import com.example.QL_Cuahang_ZARA.repository.SanPhamRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -83,7 +85,7 @@ public class GioHangService {
             chiTietGioHangRepository.save(newChiTietGioHang); // Lưu chi tiết giỏ hàng mới
         }
     }
-    public List<ChiTietGioHangResponse> getChiTietGioHangByMaNguoiDung(int maNguoiDung){
+    public GioHangResponse getChiTietGioHangByMaNguoiDung(int maNguoiDung){
         GioHang gioHang = gioHangRepository.findByNguoiDung_maNguoiDung(maNguoiDung);
         if (gioHang == null) {
             throw new RuntimeException("Người dùng chưa có giỏ hàng");
@@ -92,18 +94,41 @@ public class GioHangService {
         List<ChiTietGioHang> chiTietList = chiTietGioHangRepository.findByGioHang(gioHang);
 
         List<ChiTietGioHangResponse> result = new java.util.ArrayList<>();
+        BigDecimal tongTien = BigDecimal.ZERO;
+
         for (ChiTietGioHang ct : chiTietList){
             SanPham sp = ct.getSanPham();
+            BigDecimal thanhTien = sp.getGia().multiply(BigDecimal.valueOf(ct.getSoLuong()));
+            tongTien = tongTien.add(thanhTien);
+
             ChiTietGioHangResponse dto = ChiTietGioHangResponse.builder()
                     .maSanPham(sp.getMaSanPham())
                     .tenSanPham(sp.getTenSanPham())
                     .soLuong(ct.getSoLuong())
                     .gia(sp.getGia())
                     .hinhAnh(sp.getHinhAnh())
-                    .thanhTien(sp.getGia().multiply(java.math.BigDecimal.valueOf(ct.getSoLuong())))
+                    .thanhTien(thanhTien)
                     .build();
+
             result.add(dto);
         }
-        return result;
+
+        return GioHangResponse.builder()
+                .maNguoiDung(maNguoiDung)
+                .danhSachSanPham(result)
+                .tongTien(tongTien)
+                .build();
     }
+
+    public void updateQuantity(int maNguoiDung, int maSanPham, int soLuongMoi) {
+        GioHang gioHang = gioHangRepository.findByNguoiDung_maNguoiDung(maNguoiDung);
+        SanPham sanPham = sanPhamRepository.findById(maSanPham)
+                .orElseThrow(() -> new RuntimeException("Sản phẩm không tồn tại"));
+        ChiTietGioHang chiTiet = chiTietGioHangRepository.findByGioHangAndSanPham(gioHang, sanPham)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy sản phẩm trong giỏ hàng"));
+
+        chiTiet.setSoLuong(soLuongMoi);
+        chiTietGioHangRepository.save(chiTiet);
+    }
+
 }

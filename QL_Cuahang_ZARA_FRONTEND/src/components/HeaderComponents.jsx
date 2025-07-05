@@ -29,6 +29,7 @@ export default function HeaderComponents() {
         isSearchPage: false,
         isProductDetail: false,
         isLogout: false,
+        isCart: false,
     });
 
     useEffect(() => {
@@ -37,6 +38,7 @@ export default function HeaderComponents() {
             isSearchPage: location.pathname === '/home/search',
             isProductDetail: location.pathname.startsWith('/product/'),
             isLogout: location.pathname === '/logout',
+            isCart: location.pathname === '/mycart',
         });
     }, [location.pathname]);
 
@@ -112,7 +114,7 @@ export default function HeaderComponents() {
         setShowLogoutBtn(prev => !prev);
     };
 
-    const { isHomePage, isSearchPage, isProductDetail, isLogout } = pageStates;
+    const { isHomePage, isSearchPage, isProductDetail, isLogout, isCart } = pageStates;
 
     return (
         <div>
@@ -197,6 +199,12 @@ export default function HeaderComponents() {
                         <li><a href='#'><span>Nữ</span></a></li>
                         <li><a href='#'><span>Trẻ em</span></a></li>
                     </ul>
+                )}
+
+                {isCart && (
+                    <div className="cart-link-wrapper">
+                        <a href="#" className="cart-link">GIỎ</a>
+                    </div>
                 )}
             </header>
         </div>

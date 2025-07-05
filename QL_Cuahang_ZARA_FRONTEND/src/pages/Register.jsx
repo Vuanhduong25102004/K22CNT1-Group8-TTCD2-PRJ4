@@ -3,7 +3,7 @@ import HeaderComponents from '../components/HeaderComponents';
 import FooterComponents from '../components/FooterComponents';
 import { useNavigate } from "react-router-dom";
 import '../styles/Register.scss';
-import { createNguoiDung } from '../services/RegisterService';
+import { createNguoiDung } from '../services/registerService';
 
 function Register() {
     const [formData, setFormData] = useState({

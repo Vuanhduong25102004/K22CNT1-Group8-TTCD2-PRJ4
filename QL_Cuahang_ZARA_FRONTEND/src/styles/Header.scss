@@ -94,14 +94,14 @@ header {
 }
 
 .ul-category-menu {
-  width: 100%;             /* Cho ul rộng full hàng mới */
-  display: flex;           /* Hiển thị dạng flex theo hàng ngang */
-  justify-content: flex-start;  /* Căn trái (có thể thay center hay space-around) */
-  padding-left: 48px;      /* Căn thẳng với logo (theo padding logo) */
-  margin-top: 10px;        /* Khoảng cách trên để không sát logo */
+  width: 100%;            
+  display: flex;           
+  justify-content: flex-start; 
+  padding-left: 48px;     
+  margin-top: 10px;        
   list-style: none;
   margin-top: 50px;
-  gap: 20px;               /* Khoảng cách giữa các mục */
+  gap: 20px;              
 }
 
 .ul-category-menu li a span {
@@ -113,4 +113,13 @@ header {
 
 .ul-category-menu li a:hover span {
   text-decoration: underline;
+}
+.cart-link-wrapper {
+  width: 100%;
+  margin: 50px 0px 0px 0px;
+  padding-left: 79px;
+}
+.cart-link {
+  margin: 50px 0;
+  width: 100%;    
 }

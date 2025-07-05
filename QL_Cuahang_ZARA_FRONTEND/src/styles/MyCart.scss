@@ -1,0 +1,88 @@
+.container{
+    width: 100%;
+    padding: 0 128px; 
+    box-sizing: border-box;
+}
+.products-row {
+  display: flex;
+  gap: 100px;
+}
+
+.product-card-cart {
+  height: 408px;
+    width: 237px;   
+}
+
+.product-card-cart img {
+  
+ 
+}
+.product-card-cart h3 {
+  white-space: nowrap;        
+  overflow: hidden;         
+  text-overflow: ellipsis;   
+  font-size: 16px;
+  margin: 8px 0;
+  max-width: 100%;
+}
+
+.thanhtoan {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: white;
+  padding: 16px 128px;
+  border-top: 1px solid #ffffff;
+  z-index: 1000;
+
+  .thanhtoan-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 40px;
+    flex-wrap: wrap; /* để p xuống dòng nếu không đủ width */
+  }
+
+  .ghichu {
+    flex: 1;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .ghichu a {
+    color: black;
+    text-decoration: underline;
+  }
+
+  .thanhtoan-row {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+  }
+
+  .thanhtoan-info {
+    text-align: right;
+  }
+
+  .btn-continue {
+    background-color: black;
+    color: white;
+    padding: 12px 24px;
+    border: none;
+    cursor: pointer;
+  }
+}
+.quantity-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0;
+}
+
+.quantity-control button {
+  width: 24px;
+  height: 24px;
+  font-size: 16px;
+  cursor: pointer;
+}
