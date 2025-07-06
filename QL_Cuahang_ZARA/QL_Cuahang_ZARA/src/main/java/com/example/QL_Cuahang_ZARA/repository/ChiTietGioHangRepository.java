@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.Optional;
 
-public interface ChiTietGioHangRepository extends JpaRepository<ChiTietGioHang, Integer> {
+public interface ChiTietGioHangRepository extends JpaRepository<ChiTietGioHang, Long> {
     Optional<ChiTietGioHang> findByGioHangAndSanPham(GioHang gioHang, SanPham sanPham);
     List<ChiTietGioHang> findByGioHang(GioHang gioHang);
 }
