@@ -1,0 +1,107 @@
+.user-container{
+    margin: 0px 123px;
+    display: flex;
+}
+.user-content li {
+    font-size: 14px;
+    text-transform: uppercase;
+}
+.user-menu{
+    padding-bottom: 100px;
+}
+.user-menu,
+.user-support {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+.user-right{
+    margin-left: 500px;
+}
+.profile-right h2{
+    text-transform: uppercase;
+    font-weight: bold;
+}
+.profile-right {
+    font-size: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px; /* thêm khoảng cách giữa các info-item */
+}
+.profile-button {
+    border: 1px solid black;
+    padding: 12px 24px;
+    font-size: 1.2rem;
+    min-height: 40px;
+    min-width: 280px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    background-color: white;
+    color: black;
+}
+
+.profile-button:hover {
+    background-color: #dfdfdf;
+}
+
+.info-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 20px;
+  padding-bottom: 8px;
+}
+
+.info-item label {
+  font-size: 0.9rem;
+  color: #999;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.info-item p {
+  font-size: 1rem;
+  color: #000;
+  margin: 0;
+}
+.info-item input{
+    width: 100%;
+  font-size: 1rem;
+  border: none;
+  padding-top: 26px;
+  border-bottom: 1px solid #000;
+  background: transparent;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.profile-button-save,
+.profile-button-cancel {
+  padding: 12px 24px;
+  font-size: 1.2rem;
+  min-height: 40px;
+  min-width: 180px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  border: 1px solid black;
+  margin-right: 12px;
+}
+
+.profile-button-save {
+  background-color: black;
+  color: white;
+}
+
+.profile-button-save:hover {
+  background-color: #333;
+}
+
+.profile-button-cancel {
+  background-color: white;
+  color: black;
+}
+
+.profile-button-cancel:hover {
+  background-color: #f3f3f3;
+  color: #666;
+}

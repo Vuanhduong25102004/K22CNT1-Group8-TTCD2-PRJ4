@@ -1,42 +1,34 @@
 import React, { useEffect, useState } from 'react';
 import HeaderComponents from '../components/HeaderComponents';
+import FooterComponents from '../components/FooterComponents';
 import ProductsListComponents from '../components/ProductsListComponents';
-import { getMyCart, updateCartQuantity } from '../services/MyCartService';
+import { getMyCart, updateCartQuantity, checkout } from '../services/MyCartService';
 import '../styles/MyCart.scss';
+import { useNavigate } from 'react-router-dom';
 
 export default function MyCart() {
     const [cartItems, setCartItems] = useState([]);
     const [tongTien, setTongTien] = useState(0);
     const [maNguoiDung, setMaNguoiDung] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+    const navigate = useNavigate();
 
     const handleQuantityChange = async (product, newQuantity) => {
         if (newQuantity < 1 || !maNguoiDung) return;
 
-        console.log('Đã ấn nút thay đổi số lượng');
-        console.log('Dữ liệu gửi lên:', {
-            maNguoiDung,
-            maSanPham: product.maSanPham,
-            soLuongMoi: newQuantity
-        });
-
         try {
             await updateCartQuantity(maNguoiDung, product.maSanPham, newQuantity);
-            console.log('Cập nhật thành công, đang load lại giỏ hàng...');
             const data = await getMyCart();
             setCartItems(data.danhSachSanPham || []);
             setTongTien(data.tongTien || 0);
         } catch (error) {
-            console.error("❌ Lỗi khi cập nhật số lượng:", error);
             alert("Không thể cập nhật số lượng. Vui lòng thử lại.");
         }
     };
 
-
     useEffect(() => {
         getMyCart()
             .then(data => {
-                console.log("Dữ liệu từ API getMyCart:", data);
                 setCartItems(data.danhSachSanPham || []);
                 setTongTien(data.tongTien || 0);
                 setMaNguoiDung(data.maNguoiDung); // lấy mã người dùng từ backend
@@ -48,6 +40,16 @@ export default function MyCart() {
             });
     }, []);
 
+    const handleCheckout = async () => {
+        try {
+            const response = await checkout();
+            alert(response.data);
+            navigate('/');
+        } catch (error) {
+            console.error("Lỗi khi xác nhận đơn hàng:", error);
+            alert("Không thể xác nhận đơn hàng. Vui lòng thử lại.");
+        }
+    };
     return (
         <>
             <HeaderComponents />
@@ -140,7 +142,7 @@ export default function MyCart() {
                                     </p>
                                     <p className="vat-note">* Bao gồm thuế VAT</p>
                                 </div>
-                                <button className="btn-continue">TIẾP TỤC</button>
+                                <button className="btn-continue" onClick={handleCheckout}>TIẾP TỤC</button>
                             </div>
                         </div>
                     </div>
@@ -153,6 +155,7 @@ export default function MyCart() {
                     <ProductsListComponents />
                 </div>
             </main>
+            <FooterComponents />
         </>
     );
 }

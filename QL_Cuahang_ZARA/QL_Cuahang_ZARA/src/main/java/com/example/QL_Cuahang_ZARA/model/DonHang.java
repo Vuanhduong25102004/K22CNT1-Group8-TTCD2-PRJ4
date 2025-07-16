@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.FieldDefaults;
 import jakarta.persistence.*;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Entity
@@ -18,16 +19,16 @@ import java.util.Date;
 public class DonHang {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    int MaDonHang;
+    int maDonHang;
 
     @ManyToOne
     @JoinColumn(name = "MaNguoiDung", nullable = false)
     NguoiDung nguoiDung;
 
-    double TongTien;
+    BigDecimal TongTien;
 
     @ManyToOne
-    @JoinColumn(name = "MaPhuongThuc", nullable = false)
+    @JoinColumn(name = "MaPhuongThuc", nullable = true)
     PhuongThucThanhToan phuongThucThanhToan;
 
     @Column(nullable = false)

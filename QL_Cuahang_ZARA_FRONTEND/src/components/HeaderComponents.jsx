@@ -164,21 +164,23 @@ export default function HeaderComponents() {
                             )}
                             {userName && (
                                 <li className='li-login relative'>
-                                    <span
-                                        style={{ cursor: 'pointer' }}
-                                        onClick={toggleLogoutBtn}
-                                    >
-                                        {userName}
-                                    </span>
+                                    <Link to='/user'>
+                                        <span
+                                            style={{ cursor: 'pointer' }}
+                                            onClick={toggleLogoutBtn}
+                                        >
+                                            {userName}
+                                        </span>
+                                    </Link>
 
-                                    {showLogoutBtn && (
+                                    {/* {showLogoutBtn && (
                                         <button
                                             onClick={handleLogout}
                                             className="absolute top-full left-0 mt-1 bg-white border border-gray-300 rounded px-3 py-1 text-sm hover:bg-gray-100"
                                         >
                                             Đăng xuất
                                         </button>
-                                    )}
+                                    )} */}
                                 </li>
                             )}
                         </>

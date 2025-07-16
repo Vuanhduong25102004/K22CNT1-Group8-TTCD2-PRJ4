@@ -1,0 +1,96 @@
+.order-header p {
+    margin: 4px 0;
+}
+
+.order-products ul {
+    margin-top: 12px;
+    padding-left: 20px;
+    list-style-type: disc;
+}
+
+.order-products li {
+    margin-bottom: 4px;
+}
+
+.order-card {
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 25px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.06);
+    border: 1px solid #eee;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    max-width: 800px;
+    width: 100%;
+}
+
+.order-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.1);
+}
+
+.payment-form {
+    margin-top: 16px;
+    padding: 16px;
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.payment-form label {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 6px;
+    color: #333;
+}
+
+.payment-form select {
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    margin-bottom: 12px;
+    font-size: 14px;
+    background-color: #fff;
+}
+
+.payment-form img {
+    display: block;
+    margin: 10px auto;
+    max-width: 200px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+.confirm-button {
+    margin-top: 10px;
+    padding: 10px 20px;
+    background-color: #007bff;
+    border: none;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    display: block;
+    width: 100%;
+}
+
+.confirm-button:hover {
+    background-color: #0069d9;
+}
+.pay-button {
+    margin-top: 10px;
+    padding: 8px 16px;
+    background-color: #28a745; /* Màu xanh lá cây */
+    border: none;
+    color: white;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.pay-button:hover {
+    background-color: #218838; /* Màu xanh đậm hơn khi hover */
+}

@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.math.BigDecimal;
+
 @Entity
 @Table(name = "ChiTietDonHang")
 @Data
@@ -24,5 +26,5 @@ public class ChiTietDonHang {
     SanPham sanPham;
 
     int SoLuong;
-    double DonGia;
+    BigDecimal DonGia;
 }

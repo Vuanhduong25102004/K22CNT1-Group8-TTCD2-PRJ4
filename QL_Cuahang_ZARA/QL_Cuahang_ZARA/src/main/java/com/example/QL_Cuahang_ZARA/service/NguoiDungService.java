@@ -42,33 +42,34 @@ public class NguoiDungService {
         return nguoiDungRepository.save(nguoiDung);
     }
 
-    // update user
     public NguoiDung updateNguoiDung(Integer MaNguoiDung, NguoiDungUpdateRequest request){
         NguoiDung nguoiDung = getNguoiDung(MaNguoiDung);
 
-        // Kiểm tra xem email có thay đổi hay không
+        // Kiểm tra email mới
         if (request.getEmail() != null && !request.getEmail().trim().isEmpty() && !nguoiDung.getEmail().equals(request.getEmail())) {
-            // Nếu email thay đổi, kiểm tra xem email mới đã tồn tại chưa
             if (nguoiDungRepository.existsByEmail(request.getEmail())) {
                 throw new RuntimeException("Email này đã tồn tại.");
             }
-            // Cập nhật email nếu không có vấn đề gì
             nguoiDung.setEmail(request.getEmail());
         }
 
         nguoiDung.setHoTen(request.getHoTen());
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
 
-        nguoiDung.setMatKhau(passwordEncoder.encode(request.getMatKhau()));
+        // Chỉ cập nhật mật khẩu nếu có nhập mới
+        if (request.getMatKhau() != null && !request.getMatKhau().trim().isEmpty()) {
+            PasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
+            nguoiDung.setMatKhau(passwordEncoder.encode(request.getMatKhau()));
+        }
 
-        // Cập nhật Role nếu có thay đổi
+        // Cập nhật role nếu có
         if (request.getRole() != null) {
             try {
-                nguoiDung.setRole(Role.valueOf(request.getRole()));  // Chuyển đổi chuỗi thành enum Role
+                nguoiDung.setRole(Role.valueOf(request.getRole()));
             } catch (IllegalArgumentException e) {
                 throw new RuntimeException("Role không hợp lệ.");
             }
         }
+
         return nguoiDungRepository.save(nguoiDung);
     }
 

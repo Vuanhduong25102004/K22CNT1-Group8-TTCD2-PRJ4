@@ -28,3 +28,11 @@ export const updateCartQuantity = async (maNguoiDung, maSanPham, soLuongMoi) => 
     });
     return response.data;
 };
+
+export const checkout = () => {
+    return axios.post('http://localhost:8080/giohang/checkout', null, {
+        headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`
+        }
+    });
+};

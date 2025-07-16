@@ -2,14 +2,8 @@ package com.example.QL_Cuahang_ZARA.service;
 
 import com.example.QL_Cuahang_ZARA.dto.response.ChiTietGioHangResponse;
 import com.example.QL_Cuahang_ZARA.dto.response.GioHangResponse;
-import com.example.QL_Cuahang_ZARA.model.ChiTietGioHang;
-import com.example.QL_Cuahang_ZARA.model.GioHang;
-import com.example.QL_Cuahang_ZARA.model.NguoiDung;
-import com.example.QL_Cuahang_ZARA.model.SanPham;
-import com.example.QL_Cuahang_ZARA.repository.ChiTietGioHangRepository;
-import com.example.QL_Cuahang_ZARA.repository.GioHangRepository;
-import com.example.QL_Cuahang_ZARA.repository.NguoiDungRepository;
-import com.example.QL_Cuahang_ZARA.repository.SanPhamRepository;
+import com.example.QL_Cuahang_ZARA.model.*;
+import com.example.QL_Cuahang_ZARA.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,7 +25,13 @@ public class GioHangService {
     private ChiTietGioHangRepository chiTietGioHangRepository;
 
     @Autowired
+    private ChiTietDonHangRepository chiTietDonHangRepository;
+
+    @Autowired
     private SanPhamRepository sanPhamRepository;
+
+    @Autowired
+    private DonHangRepository donHangRepository;
 
     public List<GioHang> getAllGioHang(){
         return gioHangRepository.findAll();
@@ -131,4 +131,41 @@ public class GioHangService {
         chiTietGioHangRepository.save(chiTiet);
     }
 
+    public void checkout (int maNguoiDung) {
+        GioHang gioHang = gioHangRepository.findByNguoiDung_maNguoiDung(maNguoiDung);
+        if (gioHang == null) throw  new RuntimeException("Không tìm thấy giỏ hàng");
+
+        List<ChiTietGioHang> chiTietList = chiTietGioHangRepository.findByGioHang(gioHang);
+        if (chiTietList.isEmpty()) throw new RuntimeException("Giỏ hàng trống");
+
+        DonHang donHang = new DonHang();
+        donHang.setNguoiDung(gioHang.getNguoiDung());
+        donHang.setNgayDat(new Date());
+        donHang.setTrangThaiDonHang("Chờ xác nhận");
+        donHang.setTrangThaiDonHang("Chưa thanh toán");
+        donHang.setTongTien(BigDecimal.ZERO);
+
+        donHang = donHangRepository.save(donHang);
+
+        BigDecimal tongTien = BigDecimal.ZERO;
+
+        for (ChiTietGioHang ct : chiTietList) {
+            ChiTietDonHang chiTietDH = new ChiTietDonHang();
+            chiTietDH.setDonHang(donHang);
+            chiTietDH.setSanPham(ct.getSanPham());
+            chiTietDH.setSoLuong(ct.getSoLuong());
+            chiTietDH.setDonGia(ct.getSanPham().getGia());
+
+            BigDecimal thanhTien = ct.getSanPham().getGia().multiply(BigDecimal.valueOf(ct.getSoLuong()));
+            tongTien = tongTien.add(thanhTien);
+
+            chiTietDonHangRepository.save(chiTietDH);
+        }
+
+        // Cập nhật tổng tiền cho đơn hàng
+        donHang.setTongTien(tongTien);
+        donHangRepository.save(donHang);
+
+        chiTietGioHangRepository.deleteAll(chiTietList);
+    }
 }

@@ -109,4 +109,15 @@ public class GioHangController {
         }
     }
 
+    @PostMapping("/checkout")
+    public ResponseEntity<String> checkout(@RequestHeader("Authorization") String token) {
+        try {
+            int maNguoiDung = getMaNguoiDungFromToken(token);
+            gioHangService.checkout(maNguoiDung);
+            return ResponseEntity.ok("Xác nhận đơn hàng");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Lỗi khi đặt hàng: " + e.getMessage());
+        }
+    }
 }
