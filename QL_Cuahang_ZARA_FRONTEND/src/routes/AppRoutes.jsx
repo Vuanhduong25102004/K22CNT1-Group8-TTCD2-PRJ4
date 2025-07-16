@@ -14,6 +14,17 @@ import User from '../pages/User';
 import Myinfo from '../pages/Myinfo';
 import UserOrders from '../pages/UserOrders';
 
+import Users from '../components/Users';
+import GioHang from '../components/GioHang';
+import DonHang from '../components/DonHang';
+
+// Nhập cả hai component OrderDetail (cho tất cả) và SingleOrderDetail (cho 1 đơn hàng cụ thể)
+import OrderDetail from '../components/OrderDetail'; // Component hiện tại của bạn (hiển thị TẤT CẢ)
+import SingleOrderDetail from '../components/SingleOrderDetail'; // Component mới tạo (hiển thị 1 đơn hàng)
+import AdminPaymentManagement from '../components/AdminPaymentManagement';
+import AdminPaymentMethodManagement from '../components/AdminPaymentMethodManagement';
+import ChiTietGioHang from '../components/ChiTietGioHang';
+
 export default function AppRoutes() {
     return (
         <Routes>
@@ -33,7 +44,8 @@ export default function AppRoutes() {
                     </RequireAuth>
                 }
             />
-
+            <Route path="/donhang-chitiet/:maDonHang" element={<SingleOrderDetail />} />
+            <Route path="/giohang-chitiet/:maGioHang" element={<ChiTietGioHang />} />
             {/* Khu vực /user có chứa các trang con như /user/myinfo */}
             <Route
                 path="/user"
@@ -55,6 +67,16 @@ export default function AppRoutes() {
                 }
             >
                 <Route path="products" element={<Products />} />
+                <Route path="users" element={<Users />} />
+                <Route path="giohang" element={<GioHang />} />
+                <Route path="donhang" element={<DonHang />} />
+                <Route path="adminpaymentmanagement" element={<AdminPaymentManagement />} />
+                <Route path="adminpaymentmethodmanagement" element={<AdminPaymentMethodManagement />} />
+                <Route path="chitietgiohang" element={<ChiTietGioHang />} />
+
+                {/* Route cho component OrderDetail (hiển thị TẤT CẢ chi tiết đơn hàng) */}
+                {/* Đảm bảo tên path này khớp với Link quay lại từ SingleOrderDetail */}
+                <Route path="orderdetail" element={<OrderDetail />} />
             </Route>
         </Routes>
     );

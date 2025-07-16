@@ -77,4 +77,7 @@ public class SanPhamService {
 
         return fileName;
     }
+    public List<SanPham> getSanPhamByMaDanhMuc(String maDanhMuc) {
+        return sanPhamRepository.findByDanhMuc_MaDanhMuc(maDanhMuc);
+    }
 }

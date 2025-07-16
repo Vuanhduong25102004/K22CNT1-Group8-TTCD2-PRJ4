@@ -70,4 +70,9 @@ public class SanPhamController {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
     }
+
+    @GetMapping("/danh-muc/{maDanhMuc}")
+    public List<SanPham> getSanPhamTheoDanhMuc(@PathVariable String maDanhMuc) {
+        return sanPhamService.getSanPhamByMaDanhMuc(maDanhMuc);
+    }
 }

@@ -86,6 +86,14 @@ export default function HeaderComponents() {
             window.removeEventListener('userChanged', updateUserName);
         };
     }, []);
+    const fetchByCategory = async (maDanhMuc) => {
+        try {
+            const res = await axios.get(`http://localhost:8080/san-pham/danh-muc/${maDanhMuc}`);
+            setProductList(res.data); // hoặc setProducts, tuỳ state bạn dùng
+        } catch (err) {
+            console.error("Lỗi khi tải sản phẩm theo danh mục:", err);
+        }
+    };
 
     const handleLogout = () => {
         logout()
@@ -197,9 +205,9 @@ export default function HeaderComponents() {
 
                 {isSearchPage && (
                     <ul className="ul-category-menu">
-                        <li><a href='#'><span>Nam</span></a></li>
-                        <li><a href='#'><span>Nữ</span></a></li>
-                        <li><a href='#'><span>Trẻ em</span></a></li>
+                        <li><a href="#" onClick={() => fetchByCategory('DMNAM')}><span>Nam</span></a></li>
+                        <li><a href="#" onClick={() => fetchByCategory('DMNU')}><span>Nữ</span></a></li>
+                        <li><a href="#" onClick={() => fetchByCategory('DMTREEM')}><span>Trẻ em</span></a></li>
                     </ul>
                 )}
 

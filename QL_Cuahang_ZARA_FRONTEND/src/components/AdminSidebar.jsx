@@ -8,13 +8,13 @@ import { PiShoppingCart, PiNoteBlankDuotone, PiCreditCardLight, PiHandCoinsLight
 
 const menuItems = [
     { name: "Sản phẩm", icon: LiaProductHunt, link: "/admin/products" },
-    { name: "Người dùng", icon: LuUser, link: "#" },
-    { name: "Giỏ hàng", icon: IoBagCheckOutline, link: "#" },
-    { name: "Chi tiết giỏ hàng", icon: PiShoppingCart, link: "#" },
-    { name: "Đơn hàng", icon: PiNoteBlankDuotone, link: "#" },
-    { name: "Chi tiết đơn hàng", icon: TbNotes, link: "#" },
-    { name: "Thanh toán", icon: PiCreditCardLight, link: "#" },
-    { name: "Phương thức thanh toán", icon: PiHandCoinsLight, link: "#" },
+    { name: "Người dùng", icon: LuUser, link: "/admin/users" },
+    { name: "Giỏ hàng", icon: IoBagCheckOutline, link: "/admin/giohang" },
+    { name: "Chi tiết giỏ hàng", icon: PiShoppingCart, link: "/admin/chitietgiohang" },
+    { name: "Đơn hàng", icon: PiNoteBlankDuotone, link: "/admin/donhang" },
+    { name: "Chi tiết đơn hàng", icon: TbNotes, link: "/admin/orderDetail" },
+    { name: "Thanh toán", icon: PiCreditCardLight, link: "/admin/adminpaymentmanagement" },
+    { name: "Phương thức thanh toán", icon: PiHandCoinsLight, link: "/admin/adminpaymentmethodmanagement" },
 ]
 
 export default function AdminSidebar() {
