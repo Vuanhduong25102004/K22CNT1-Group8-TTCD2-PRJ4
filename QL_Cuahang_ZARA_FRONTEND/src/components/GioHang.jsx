@@ -4,8 +4,9 @@
 // Khi nhấp vào mã giỏ hàng, nó sẽ điều hướng đến trang chi tiết của giỏ hàng đó.
 
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom'; // Import Link
-import gioHangService from '../services/gioHangService'; // Đảm bảo đúng tên file/module
+import { Link } from 'react-router-dom';
+import gioHangService from '../services/gioHangService';
+import chiTietGioHangService from '../services/chiTietGioHangService'; // <-- THÊM DÒNG NÀY
 
 // --- Styles (Tái sử dụng từ OrderDetail để giữ nhất quán) ---
 const containerStyle = {
@@ -80,25 +81,65 @@ const backButtonStyle = {
 
 
 function GioHang() {
-    const [allGioHang, setAllGioHang] = useState([]); // State để lưu tất cả các đối tượng giỏ hàng (cha)
+    const [allGioHang, setAllGioHang] = useState([]); // State để lưu tất cả các đối tượng giỏ hàng (cha) đã được làm giàu
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    // const [allChiTietGioHangData, setAllChiTietGioHangData] = useState([]); // Không cần thiết lưu vào state riêng nếu chỉ dùng trong hàm fetch
 
-    // Function to load all cart data
+    // Hàm tính tổng tiền và số lượng sản phẩm cho một giỏ hàng cụ thể
+    // Dựa vào maGioHang và toàn bộ danh sách chi tiết giỏ hàng
+    const calculateCartTotals = (maGioHangId, chiTietItems) => {
+        let totalAmount = 0;
+        let totalQuantity = 0;
+
+        // Lọc ra các chi tiết giỏ hàng thuộc về giỏ hàng cha hiện tại
+        const cartItemsForThisCart = chiTietItems.filter(
+            item => String(item.gioHang?.maGioHang) === String(maGioHangId)
+        );
+
+        cartItemsForThisCart.forEach(item => {
+            // Đảm bảo truy cập đúng giá sản phẩm và số lượng
+            const itemPrice = item.sanPham?.gia || 0; 
+            totalAmount += itemPrice * (item.soLuong || 0);
+            totalQuantity += (item.soLuong || 0);
+        });
+
+        return { totalAmount, totalQuantity };
+    };
+
+    // Function to load all cart data and enrich it
     const fetchAllGioHangData = async () => {
         try {
             setLoading(true);
             setError(null);
 
-            // Gọi API để lấy TẤT CẢ các đối tượng giỏ hàng (cha)
-            // Giả định API này trả về một mảng các đối tượng giỏ hàng hoàn chỉnh
-            const data = await gioHangService.getAllGioHang();
-            setAllGioHang(data);
-            console.log("All GioHang data:", data);
+            // Bước 1: Gọi API để lấy TẤT CẢ các đối tượng giỏ hàng (cha)
+            const gioHangResponse = await gioHangService.getAllGioHang();
+            console.log("GioHang.jsx - Dữ liệu giỏ hàng (cha) đã fetched:", gioHangResponse);
+
+            // Bước 2: Gọi API để lấy TẤT CẢ các chi tiết giỏ hàng (con)
+            // (Chứa thông tin sản phẩm và số lượng)
+            const chiTietGioHangResponse = await chiTietGioHangService.getAllChiTietGioHang();
+            console.log("GioHang.jsx - Dữ liệu chi tiết giỏ hàng (con) đã fetched:", chiTietGioHangResponse);
+
+            // Bước 3: Làm giàu dữ liệu giỏ hàng (cha) với tổng tiền và số lượng sản phẩm
+            const enrichedGioHangList = gioHangResponse.map(gioHang => {
+                const { totalAmount, totalQuantity } = calculateCartTotals(
+                    gioHang.maGioHang,
+                    chiTietGioHangResponse // Truyền toàn bộ danh sách chi tiết để tính toán
+                );
+                return {
+                    ...gioHang,
+                    tongTien: totalAmount,      // Thêm trường tongTien đã tính toán
+                    soLuongSanPham: totalQuantity, // Thêm trường soLuongSanPham đã tính toán
+                };
+            });
+
+            setAllGioHang(enrichedGioHangList); // Cập nhật state với danh sách giỏ hàng đã làm giàu
+            console.log("GioHang.jsx - Danh sách giỏ hàng đã được làm giàu (enriched):", enrichedGioHangList);
 
         } catch (err) {
-            setError(err);
-            console.error('Lỗi khi tải tất cả giỏ hàng:', err);
+            console.error('GioHang.jsx - Lỗi khi tải tất cả giỏ hàng:', err);
             if (err.response && err.response.status === 401) {
                 setError({ message: "Phiên đăng nhập đã hết hạn hoặc không hợp lệ. Vui lòng đăng nhập lại." });
             } else {
@@ -110,28 +151,25 @@ function GioHang() {
     };
 
     useEffect(() => {
+        // Chạy hàm fetch dữ liệu khi component được mount
         fetchAllGioHangData();
-    }, []); // Run once on component mount
+    }, []); // Empty dependency array means this runs once after the initial render
 
     // Handle item deletion (của một giỏ hàng cha)
-    // Lưu ý: gioHangService.deleteGioHang hiện tại của bạn đang xóa gioHangItem (maChiTietGioHang)
-    // Nếu bạn muốn xóa toàn bộ giỏ hàng cha, bạn cần một API khác hoặc điều chỉnh service
     const handleDeleteGioHang = async (maGioHang) => {
+        if (!maGioHang) {
+            alert('Không thể xóa giỏ hàng vì mã giỏ hàng không hợp lệ.');
+            return;
+        }
+
         if (window.confirm(`Bạn có chắc chắn muốn xóa toàn bộ giỏ hàng với Mã ${maGioHang} này không?`)) {
             try {
-                // Tùy thuộc vào backend của bạn, bạn cần một API để xóa toàn bộ giỏ hàng.
-                // Giả sử có gioHangService.deleteFullGioHang(maGioHang) hoặc tương tự.
-                // Hiện tại, gioHangService.deleteGioHang() đang dùng cho maChiTietGioHang.
-                // Vui lòng kiểm tra lại gioHangService.js và API backend của bạn.
-                // Ví dụ:
-                // await gioHangService.deleteFullGioHang(maGioHang); 
-
-                // Tạm thời, để code không lỗi, tôi sẽ dùng alert và không gọi API thực tế
-                alert(`Chức năng xóa toàn bộ giỏ hàng ${maGioHang} đang được phát triển hoặc API cần được điều chỉnh.`);
-                // Nếu có API, sau khi xóa thành công:
-                // fetchAllGioHangData(); // Re-fetch all carts to ensure data consistency
+                // Đảm bảo gioHangService có hàm deleteGioHang tương ứng với DELETE /giohang/{id}
+                await gioHangService.deleteGioHang(maGioHang); 
+                alert(`Xóa giỏ hàng ${maGioHang} thành công!`);
+                fetchAllGioHangData(); // Tải lại danh sách sau khi xóa
             } catch (err) {
-                console.error('Lỗi khi xóa giỏ hàng:', err);
+                console.error('GioHang.jsx - Lỗi khi xóa giỏ hàng:', err);
                 alert('Có lỗi xảy ra khi xóa giỏ hàng. Vui lòng kiểm tra console.');
             }
         }
@@ -172,29 +210,43 @@ function GioHang() {
                         </tr>
                     </thead>
                     <tbody>
-                        {allGioHang.map(gioHang => (
-                            <tr key={gioHang.maGioHang}>
-                                <td style={tableCellStyle}>
-                                    {/* Link đến trang chi tiết của giỏ hàng cụ thể */}
-                                    <Link to={`/giohang-chitiet/${gioHang.maGioHang}`} style={{ textDecoration: 'none', color: '#007bff' }}>
-                                        {gioHang.maGioHang}
-                                    </Link>
-                                </td>
-                                <td style={tableCellStyle}>{gioHang.nguoiDung?.hoTen || 'N/A'}</td>
-                                <td style={tableCellStyle}>{(gioHang.tongTien || 0).toLocaleString('vi-VN') + ' VND'}</td>
-                                <td style={tableCellStyle}>{gioHang.chiTietGioHang?.length || 0}</td>
-                                <td style={tableCellStyle}>{gioHang.ngayTao ? new Date(gioHang.ngayTao).toLocaleDateString('vi-VN') : 'N/A'}</td>
-                                <td style={tableCellStyle}>{gioHang.trangThai || 'Active'}</td>
-                                <td style={tableCellStyle}>
-                                    <button
-                                        style={{ ...buttonStyle, backgroundColor: '#dc3545' }}
-                                        onClick={() => handleDeleteGioHang(gioHang.maGioHang)}
-                                    >
-                                        Xóa Giỏ hàng
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
+                        {allGioHang.map((gioHang, index) => {
+                            // DÒNG CONSOLE.LOG CỰC KỲ QUAN TRỌNG ĐỂ DEBUG
+                            // Kiểm tra giá trị của tongTien và soLuongSanPham ở đây
+                            console.log(`GioHang.jsx - Đang render hàng: maGioHang=${gioHang.maGioHang}, nguoiDung=${gioHang.nguoiDung?.hoTen}, TongTien=${gioHang.tongTien}, SoLuongSP=${gioHang.soLuongSanPham}`);
+                            return (
+                                // Sử dụng maGioHang làm key, hoặc fallback nếu không có
+                                <tr key={gioHang.maGioHang || `giohang-${index}`}>
+                                    <td style={tableCellStyle}>
+                                        {/* Tạo Link đến trang chi tiết giỏ hàng */}
+                                        {gioHang.maGioHang ? (
+                                            <Link to={`/giohang-chitiet/${gioHang.maGioHang}`} style={{ textDecoration: 'none', color: '#007bff' }}>
+                                                {gioHang.maGioHang}
+                                            </Link>
+                                        ) : (
+                                            <span style={{ color: 'red' }}>Lỗi ID</span> 
+                                        )}
+                                    </td>
+                                    <td style={tableCellStyle}>{gioHang.nguoiDung?.hoTen || 'N/A'}</td>
+                                    {/* Hiển thị Tổng tiền đã được tính toán */}
+                                    <td style={tableCellStyle}>{(gioHang.tongTien || 0).toLocaleString('vi-VN') + ' VND'}</td>
+                                    {/* Hiển thị Số lượng SP đã được tính toán */}
+                                    <td style={tableCellStyle}>{gioHang.soLuongSanPham || 0}</td> 
+                                    <td style={tableCellStyle}>{gioHang.ngayTao ? new Date(gioHang.ngayTao).toLocaleDateString('vi-VN') : 'N/A'}</td>
+                                    <td style={tableCellStyle}>{gioHang.trangThai || 'Active'}</td>
+                                    <td style={tableCellStyle}>
+                                        <button
+                                            style={{ ...buttonStyle, backgroundColor: '#dc3545' }}
+                                            onClick={() => handleDeleteGioHang(gioHang.maGioHang)}
+                                            // Vô hiệu hóa nút nếu maGioHang không có giá trị
+                                            disabled={!gioHang.maGioHang}
+                                        >
+                                            Xóa Giỏ hàng
+                                        </button>
+                                    </td>
+                                </tr>
+                            );
+                        })}
                     </tbody>
                 </table>
             </div>

@@ -23,7 +23,14 @@ export default function UserOrders() {
                         Authorization: `Bearer ${token}`
                     }
                 });
-                setOrders(res.data);
+
+                const sortedOrders = res.data.sort((a, b) => {
+                    if (a.trangThaiThanhToan === "Chưa thanh toán" && b.trangThaiThanhToan !== "Chưa thanh toán") return -1;
+                    if (a.trangThaiThanhToan !== "Chưa thanh toán" && b.trangThaiThanhToan === "Chưa thanh toán") return 1;
+                    return 0;
+                });
+
+                setOrders(sortedOrders);
             } catch (error) {
                 console.error("Lỗi khi lấy đơn hàng:", error);
             } finally {

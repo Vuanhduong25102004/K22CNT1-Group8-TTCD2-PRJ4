@@ -214,7 +214,7 @@ export default function ProductManagementPage() {
     if (error) return <p className="p-4 text-red-600 text-center font-medium">Lỗi: {error}</p>;
 
     return (
-        <div className="p-4 bg-white rounded-lg shadow-md max-w-6xl mx-auto my-8">
+        <div className="p-4 bg-white rounded-lg shadow-md w-full mx-auto my-8">
             <h2 className="text-3xl font-bold text-gray-800 mb-8 text-center border-b-2 pb-4">Quản lý Sản phẩm</h2>
 
             {/* NEW: Nút để thêm sản phẩm mới (chỉ hiện khi form đang ẩn) */}

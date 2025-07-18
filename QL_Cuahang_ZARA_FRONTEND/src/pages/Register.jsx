@@ -30,7 +30,7 @@ function Register() {
         try {
             const result = await createNguoiDung(formData);
             setMessage('Tạo tài khoản thành công');
-            navigate("/");
+            navigate("/login");
         } catch (error) {
             setMessage(error);
         }

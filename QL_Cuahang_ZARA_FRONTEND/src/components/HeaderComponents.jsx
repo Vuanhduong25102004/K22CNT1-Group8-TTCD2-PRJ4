@@ -8,10 +8,11 @@ import '../styles/Header.scss';
 import MenuIcon from '../assets/svg/svgexport-1.svg';
 import Logo1 from '../assets/svg/logo1.svg';
 import Logo2 from '../assets/svg/logo2.svg';
+import { getProductsByCategory } from '../services/productService';
 
 const logos = [Logo1, Logo2];
 
-export default function HeaderComponents() {
+export default function HeaderComponents({ onFilterByCategory }) {
     const location = useLocation();
     const navigate = useNavigate();
 
@@ -86,14 +87,6 @@ export default function HeaderComponents() {
             window.removeEventListener('userChanged', updateUserName);
         };
     }, []);
-    const fetchByCategory = async (maDanhMuc) => {
-        try {
-            const res = await axios.get(`http://localhost:8080/san-pham/danh-muc/${maDanhMuc}`);
-            setProductList(res.data); // hoặc setProducts, tuỳ state bạn dùng
-        } catch (err) {
-            console.error("Lỗi khi tải sản phẩm theo danh mục:", err);
-        }
-    };
 
     const handleLogout = () => {
         logout()
@@ -116,6 +109,15 @@ export default function HeaderComponents() {
                     alert('Đăng xuất không thành công, vui lòng thử lại.');
                 }
             });
+    };
+
+    const fetchByCategory = async (maDanhMuc) => {
+        try {
+            const products = await getProductsByCategory(maDanhMuc);
+            onFilterByCategory(products); // gọi callback truyền từ cha
+        } catch (err) {
+            console.error("Lỗi khi tải sản phẩm theo danh mục:", err);
+        }
     };
 
     const toggleLogoutBtn = () => {

@@ -38,25 +38,17 @@ function DonHang() {
             setLoading(true);
             setError(null);
 
-            // Giả định: donHangService.getAllDonHang() trả về một MẢNG CÁC ĐƠN HÀNG,
-            // trong đó mỗi đơn hàng ĐÃ CÓ MẢNG 'chiTietDonHang' LỒNG BÊN TRONG.
             const data = await donHangService.getAllDonHang();
 
-            // Thêm logic kiểm tra dữ liệu trước khi set state
             const processedData = data.map(order => {
-                // Kiểm tra và gán giá trị mặc định cho các trường cần thiết
                 return {
                     ...order,
-                    // Đảm bảo các trường địa chỉ, SĐT, ghi chú có giá trị mặc định
-                    // Nếu backend trả về trực tiếp trong order thì dùng nó,
-                    // nếu không thì có thể lấy từ nguoiDung hoặc mặc định 'N/A'
                     diaChiGiaoHang: order.diaChiGiaoHang || order.nguoiDung?.diaChi || 'N/A',
                     soDienThoai: order.soDienThoai || order.nguoiDung?.soDienThoai || 'N/A',
                     ghiChu: order.ghiChu || 'Không có',
-                    // Đảm bảo chiTietDonHang là một mảng
                     chiTietDonHang: Array.isArray(order.chiTietDonHang) ? order.chiTietDonHang : []
                 };
-            }).filter(order => order.maDonHang !== undefined && order.maDonHang !== null); // Lọc bỏ đơn hàng không có mã
+            }).filter(order => order.maDonHang !== undefined && order.maDonHang !== null);
 
             setDonHangList(processedData);
 
@@ -83,16 +75,43 @@ function DonHang() {
         }));
     };
 
-    const handleChangeStatus = async (orderId, currentStatus) => {
-        const newStatus = prompt(`Nhập trạng thái mới cho đơn hàng ${orderId} (hiện tại: ${currentStatus}):`);
-        if (newStatus && newStatus.trim() !== '' && newStatus !== currentStatus) {
+    // SỬA ĐỔI HÀM handleChangeStatus
+    const handleChangeStatus = async (orderId, currentTrangThaiDonHang) => {
+        const newStatus = prompt(`Nhập trạng thái mới cho đơn hàng ${orderId} (hiện tại: ${currentTrangThaiDonHang}):`);
+        
+        if (newStatus && newStatus.trim() !== '' && newStatus !== currentTrangThaiDonHang) {
             try {
-                await donHangService.updateTrangThaiDonHang(orderId, newStatus);
+                // 1. Tìm đơn hàng hiện tại trong danh sách để có tất cả các trường dữ liệu
+                const orderToUpdate = donHangList.find(order => order.maDonHang === orderId);
+
+                if (!orderToUpdate) {
+                    alert('Không tìm thấy đơn hàng để cập nhật trạng thái.');
+                    return;
+                }
+
+                // 2. Tạo một bản sao của đối tượng đơn hàng, sau đó cập nhật trường 'trangThai'.
+                // LƯU Ý: Backend của bạn mong đợi trường là 'trangThai' chứ không phải 'trangThaiDonHang'.
+                // Đảm bảo tên trường này khớp với model DonHang trên Spring Boot.
+                const updatedOrderData = {
+                    ...orderToUpdate,
+                    trangThai: newStatus // Cập nhật trường 'trangThai'
+                };
+
+                // 3. Gọi service với ID và đối tượng đơn hàng đã cập nhật
+                // Hàm donHangService.updateTrangThaiDonHang giờ đây nhận một đối tượng đầy đủ
+                await donHangService.updateTrangThaiDonHang(orderId, updatedOrderData); 
+
                 alert('Cập nhật trạng thái đơn hàng thành công!');
-                fetchDonHang();
+                fetchDonHang(); // Tải lại danh sách để hiển thị thay đổi mới
+
             } catch (err) {
                 console.error('Lỗi khi cập nhật trạng thái đơn hàng:', err);
-                alert('Có lỗi xảy ra khi cập nhật trạng thái. Vui lòng kiểm tra console.');
+                // Hiển thị thông báo lỗi chi tiết hơn nếu có từ server
+                if (err.response && err.response.data && err.response.data.message) {
+                    alert(`Lỗi: ${err.response.data.message}`);
+                } else {
+                    alert('Có lỗi xảy ra khi cập nhật trạng thái. Vui lòng kiểm tra console.');
+                }
             }
         } else if (newStatus !== null && newStatus !== '') {
             alert('Trạng thái không đổi hoặc không hợp lệ.');
@@ -198,8 +217,6 @@ function DonHang() {
                                                 </thead>
                                                 <tbody>
                                                     {order.chiTietDonHang.map(detail => (
-                                                        // maChiTiet có thể nằm trực tiếp trong detail nếu đó là đối tượng ChiTietDonHang
-                                                        // hoặc detail.maChiTietDonHang nếu backend dùng tên khác
                                                         <tr key={detail.maChiTiet || detail.maChiTietDonHang}>
                                                             <td style={{ ...tableCellStyle, padding: '8px' }}>{detail.sanPham ? detail.sanPham.maSanPham : 'N/A'}</td>
                                                             <td style={{ ...tableCellStyle, padding: '8px' }}>{detail.sanPham ? detail.sanPham.tenSanPham : 'N/A'}</td>

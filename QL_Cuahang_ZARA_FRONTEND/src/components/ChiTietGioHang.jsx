@@ -1,10 +1,10 @@
 // src/components/ChiTietGioHang.jsx
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import gioHangService from '../services/gioHangService'; // Để lấy thông tin giỏ hàng cha
-import chiTietGioHangService from '../services/chiTietGioHangService'; // Để quản lý chi tiết từng sản phẩm trong giỏ hàng
+import gioHangService from '../services/gioHangService'; // Vẫn cần để lấy token nếu có
+import chiTietGioHangService from '../services/chiTietGioHangService'; // Để lấy chi tiết các sản phẩm trong giỏ hàng
 
-// --- Styles (Tái sử dụng từ GioHang.jsx để giữ nhất quán) ---
+// --- Styles (Giữ nguyên) ---
 const containerStyle = {
     padding: '20px',
     maxWidth: '1200px',
@@ -87,28 +87,71 @@ const deleteButtonStyle = {
 
 
 function ChiTietGioHang() {
-    const { maGioHang } = useParams(); // Lấy maGioHang từ URL
-    const navigate = useNavigate(); // Dùng để điều hướng
-    const [gioHang, setGioHang] = useState(null); // State cho giỏ hàng cha
+    const { maGioHang } = useParams();
+    const navigate = useNavigate();
+    const [gioHang, setGioHang] = useState(null); // Sẽ chứa thông tin giỏ hàng cha và chi tiết của nó
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    // Hàm tính tổng tiền trên frontend
+    const calculateFrontendTongTien = (items) => {
+        if (!items || items.length === 0) {
+            return 0;
+        }
+        return items.reduce((total, item) => {
+            const itemPrice = item.sanPham?.gia || item.gia || 0; // Ưu tiên item.gia nếu có, nếu không dùng sanPham.gia
+            return total + (itemPrice * item.soLuong);
+        }, 0);
+    };
+
+
     const fetchGioHangDetail = async () => {
+        if (!maGioHang) {
+            setLoading(false);
+            setError({ message: "Không tìm thấy mã giỏ hàng trong URL. Vui lòng trở lại trang danh sách giỏ hàng." });
+            console.error("ChiTietGioHang.jsx - Lỗi: maGioHang từ useParams là undefined hoặc null. URL có thể không đúng.");
+            return;
+        }
+
         try {
             setLoading(true);
             setError(null);
-            // Gọi API từ gioHangService để lấy chi tiết giỏ hàng cha
-            const data = await gioHangService.getGioHangById(maGioHang);
-            setGioHang(data);
-            console.log("Chi tiết giỏ hàng:", data);
+
+            // ****** THAY ĐỔI QUAN TRỌNG Ở ĐÂY ******
+            // Gọi API để lấy TẤT CẢ các chi tiết giỏ hàng
+            console.log("ChiTietGioHang.jsx - Đang gọi chiTietGioHangService.getAllChiTietGioHang()");
+            const allChiTietGioHang = await chiTietGioHangService.getAllChiTietGioHang();
+            console.log("ChiTietGioHang.jsx - Dữ liệu tất cả chi tiết giỏ hàng đã nhận:", allChiTietGioHang);
+
+            // Lọc ra các chi tiết giỏ hàng thuộc về maGioHang hiện tại
+            const filteredChiTietGioHang = allChiTietGioHang.filter(
+                item => String(item.gioHang?.maGioHang) === String(maGioHang)
+            );
+
+            console.log(`ChiTietGioHang.jsx - Các chi tiết giỏ hàng được lọc cho mã ${maGioHang}:`, filteredChiTietGioHang);
+
+            if (filteredChiTietGioHang.length > 0) {
+                // Lấy thông tin giỏ hàng cha từ một trong các chi tiết đã lọc
+                const parentGioHangInfo = filteredChiTietGioHang[0].gioHang;
+
+                // Tạo đối tượng gioHang hoàn chỉnh để set vào state
+                const reconstructedGioHang = {
+                    ...parentGioHangInfo, // Lấy thông tin cơ bản của giỏ hàng cha
+                    chiTietGioHang: filteredChiTietGioHang, // Gán danh sách chi tiết đã lọc
+                    // Tính toán tổng tiền trên frontend
+                    tongTien: calculateFrontendTongTien(filteredChiTietGioHang)
+                };
+
+                setGioHang(reconstructedGioHang);
+                console.log(`ChiTietGioHang.jsx - Giỏ hàng ${maGioHang} đã tái tạo:`, reconstructedGioHang);
+            } else {
+                setError({ message: `Không tìm thấy giỏ hàng hoặc sản phẩm nào cho mã: ${maGioHang}. Vui lòng kiểm tra ID.` });
+            }
         } catch (err) {
-            console.error(`Lỗi khi tải chi tiết giỏ hàng ${maGioHang}:`, err);
+            console.error(`ChiTietGioHang.jsx - Lỗi khi tải chi tiết giỏ hàng ${maGioHang}:`, err);
             if (err.response && err.response.status === 401) {
                 setError({ message: "Phiên đăng nhập đã hết hạn hoặc không hợp lệ. Vui lòng đăng nhập lại." });
-            } else if (err.response && err.response.status === 404) {
-                setError({ message: `Không tìm thấy giỏ hàng với mã: ${maGioHang}` });
-            }
-            else {
+            } else {
                 setError({ message: err.message || "Đã xảy ra lỗi không xác định khi tải chi tiết giỏ hàng." });
             }
         } finally {
@@ -117,20 +160,23 @@ function ChiTietGioHang() {
     };
 
     useEffect(() => {
-        fetchGioHangDetail();
-    }, [maGioHang]); // maGioHang là dependency, component sẽ fetch lại khi maGioHang thay đổi
+        if (maGioHang) {
+            fetchGioHangDetail();
+        } else {
+            setLoading(false);
+            setError({ message: "URL không chứa mã giỏ hàng. Vui lòng quay lại trang danh sách và chọn một giỏ hàng." });
+        }
+    }, [maGioHang]);
 
-    // Xử lý cập nhật số lượng chi tiết giỏ hàng
     const handleUpdateQuantity = async (maChiTietGioHang, currentSoLuong) => {
         const newSoLuong = prompt(`Nhập số lượng mới cho sản phẩm (ID: ${maChiTietGioHang}):`, currentSoLuong);
         if (newSoLuong !== null && !isNaN(newSoLuong) && parseInt(newSoLuong) > 0) {
             try {
-                // Giả định backend của bạn cần MaChiTietGioHang và SoLuong mới
-                const updatedItem = await chiTietGioHangService.updateChiTietGioHang(maChiTietGioHang, { soLuong: parseInt(newSoLuong) });
+                await chiTietGioHangService.updateChiTietGioHang(maChiTietGioHang, { soLuong: parseInt(newSoLuong) });
                 alert('Cập nhật số lượng thành công!');
                 fetchGioHangDetail(); // Tải lại chi tiết giỏ hàng để cập nhật hiển thị
             } catch (err) {
-                console.error('Lỗi khi cập nhật số lượng:', err);
+                console.error('ChiTietGioHang.jsx - Lỗi khi cập nhật số lượng:', err);
                 alert('Lỗi khi cập nhật số lượng. Vui lòng kiểm tra console.');
             }
         } else if (newSoLuong !== null) {
@@ -138,7 +184,6 @@ function ChiTietGioHang() {
         }
     };
 
-    // Xử lý xóa một sản phẩm trong giỏ hàng (chi tiết giỏ hàng)
     const handleDeleteChiTietGioHang = async (maChiTietGioHang) => {
         if (window.confirm(`Bạn có chắc chắn muốn xóa sản phẩm này khỏi giỏ hàng? (Mã Chi Tiết: ${maChiTietGioHang})`)) {
             try {
@@ -146,12 +191,11 @@ function ChiTietGioHang() {
                 alert('Xóa sản phẩm khỏi giỏ hàng thành công!');
                 fetchGioHangDetail(); // Tải lại chi tiết giỏ hàng để cập nhật hiển thị
             } catch (err) {
-                console.error('Lỗi khi xóa chi tiết giỏ hàng:', err);
+                console.error('ChiTietGioHang.jsx - Lỗi khi xóa chi tiết giỏ hàng:', err);
                 alert('Có lỗi xảy ra khi xóa sản phẩm khỏi giỏ hàng. Vui lòng kiểm tra console.');
             }
         }
     };
-
 
     if (loading) {
         return <div style={{ textAlign: 'center', padding: '20px' }}>Đang tải chi tiết giỏ hàng...</div>;
@@ -160,13 +204,16 @@ function ChiTietGioHang() {
     if (error) {
         return <div style={{ color: 'red', textAlign: 'center', padding: '20px' }}>
             Lỗi: {error.message}.
-            <Link to="/giohang">Quay lại danh sách giỏ hàng</Link>
+            <Link to="/admin/giohang" style={{ color: '#007bff', marginLeft: '10px' }}>Quay lại danh sách giỏ hàng</Link>
         </div>;
     }
 
     if (!gioHang) {
         return <div style={{ textAlign: 'center', padding: '20px' }}>Không tìm thấy giỏ hàng.</div>;
     }
+
+    // displayTongTien sẽ luôn được tính toán từ calculateFrontendTongTien
+    const displayTongTien = calculateFrontendTongTien(gioHang.chiTietGioHang);
 
     return (
         <div style={containerStyle}>
@@ -177,7 +224,7 @@ function ChiTietGioHang() {
                 <p><strong>Mã Giỏ hàng:</strong> {gioHang.maGioHang}</p>
                 <p><strong>Người dùng:</strong> {gioHang.nguoiDung?.hoTen || 'N/A'} (ID: {gioHang.nguoiDung?.maNguoiDung || 'N/A'})</p>
                 <p><strong>Email Người dùng:</strong> {gioHang.nguoiDung?.email || 'N/A'}</p>
-                <p><strong>Tổng tiền:</strong> {(gioHang.tongTien || 0).toLocaleString('vi-VN') + ' VND'}</p>
+                <p><strong>Tổng tiền:</strong> {displayTongTien.toLocaleString('vi-VN') + ' VND'}</p> {/* Sử dụng displayTongTien */}
                 <p><strong>Ngày tạo:</strong> {gioHang.ngayTao ? new Date(gioHang.ngayTao).toLocaleString('vi-VN') : 'N/A'}</p>
                 <p><strong>Trạng thái:</strong> {gioHang.trangThai || 'Active'}</p>
             </div>
@@ -203,8 +250,10 @@ function ChiTietGioHang() {
                                     <td style={tableCellStyle}>{item.sanPham?.tenSanPham || 'Sản phẩm không rõ'}</td>
                                     <td style={tableCellStyle}>{(item.sanPham?.gia || 0).toLocaleString('vi-VN') + ' VND'}</td>
                                     <td style={tableCellStyle}>{item.soLuong}</td>
-                                    {/* Giả định item.gia là giá của sản phẩm tại thời điểm thêm vào giỏ */}
-                                    <td style={tableCellStyle}>{(item.soLuong * (item.gia || 0)).toLocaleString('vi-VN') + ' VND'}</td>
+                                    <td style={tableCellStyle}>
+                                        {/* Tính thành tiền dựa trên giá của sản phẩm và số lượng */}
+                                        {((item.sanPham?.gia || 0) * item.soLuong).toLocaleString('vi-VN') + ' VND'}
+                                    </td>
                                     <td style={tableCellStyle}>
                                         <button
                                             style={updateButtonStyle}
@@ -224,11 +273,11 @@ function ChiTietGioHang() {
                         </tbody>
                     </table>
                 ) : (
-                    <p>Giỏ hàng này hiện không có sản phẩm nào.</p>
+                    <p>Giỏ hàng này hiện không có sản phẩm nào. (Nếu bạn tin rằng có sản phẩm, hãy kiểm tra dữ liệu từ API '/chitietgiohang' của backend).</p>
                 )}
             </div>
 
-            <Link to="/giohang" style={backButtonStyle}>
+            <Link to="/admin/giohang" style={backButtonStyle}>
                 &larr; Quay lại danh sách Giỏ hàng
             </Link>
         </div>

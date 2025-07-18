@@ -5,15 +5,23 @@ const API_URL = 'http://localhost:8080/products';
 const token = localStorage.getItem('token');
 
 
-
 export const getAllProducts = async () => {
-    const res = await axios.get('http://localhost:8080/products');
-    return res.data;
+    try {
+        const response = await axios.get(API_URL, {
+        });
+        return response.data; // Trả về dữ liệu JSON
+    } catch (error) {
+        throw error;
+    }
 };
 
 export const getProductsByCategory = async (maDanhMuc) => {
-    const res = await axios.get(`http://localhost:8080/products/danh-muc/${maDanhMuc}`);
-    return res.data;
+    try {
+        const response = await axios.get(`${API_URL}/danh-muc/${maDanhMuc}`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
 };
 const productService = {
 

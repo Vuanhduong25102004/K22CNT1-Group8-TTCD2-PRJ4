@@ -1,17 +1,10 @@
 // src/services/donHangService.js
 import axios from 'axios';
 
-// Đặt URL cơ sở cho API đơn hàng của bạn.
 const API_URL = 'http://localhost:8080/don-hang'; 
 
 const donHangService = {
 
-  // 1. Lấy tất cả đơn hàng (GET)
-  // Dựa trên cách bạn làm với getAllUsers trong userService,
-  // chúng ta vẫn sẽ lấy token nhưng chỉ thêm header nếu có token.
-  // Tuy nhiên, theo yêu cầu trước đó, bạn muốn hàm này KHÔNG YÊU CẦU TOKEN.
-  // Do đó, tôi giữ nguyên việc không truyền token cho hàm này,
-  // vì đây là trường hợp đặc biệt bạn muốn công khai.
   getAllDonHang: async () => {
     try {
       const response = await axios.get(API_URL);
@@ -22,11 +15,9 @@ const donHangService = {
     }
   },
 
-  // 2. Lấy đơn hàng theo User ID (GET)
   getDonHangByUserId: async (userId) => {
     try {
       const token = localStorage.getItem('token');
-      // Áp dụng cú pháp giống userService: thêm header có điều kiện
       const response = await axios.get(`${API_URL}/user/${userId}`, {
         headers: {
           ...(token && { Authorization: `Bearer ${token}` }) 
@@ -39,11 +30,9 @@ const donHangService = {
     }
   },
 
-  // 3. Lấy thông tin chi tiết một đơn hàng theo ID (GET)
   getDonHangById: async (orderId) => {
     try {
       const token = localStorage.getItem('token');
-      // Áp dụng cú pháp giống userService: thêm header có điều kiện
       const response = await axios.get(`${API_URL}/${orderId}`, {
         headers: {
           ...(token && { Authorization: `Bearer ${token}` })
@@ -57,13 +46,15 @@ const donHangService = {
   },
 
   // 4. Cập nhật trạng thái đơn hàng (PUT)
-  updateTrangThaiDonHang: async (orderId, newStatus) => {
+  // SỬA ĐỔI ĐỂ KHÔNG SỬA BACKEND: Phải gửi ĐỐI TƯỢNG DonHang ĐẦY ĐỦ
+  // Endpoint: PUT /don-hang/{orderId}
+  // Body: { maDonHang: ..., nguoiDung: {...}, ngayTao: ..., trangThai: newStatus, ... }
+  updateTrangThaiDonHang: async (orderId, donHangUpdateData) => { // Tham số thứ hai giờ là một object
     try {
       const token = localStorage.getItem('token');
-      // Áp dụng cú pháp giống userService: thêm header có điều kiện
-      const response = await axios.put(`${API_URL}/${orderId}/status`, { trangThai: newStatus }, {
+      const response = await axios.put(`${API_URL}/${orderId}`, donHangUpdateData, { // <-- URL ĐÃ SỬA VÀ THAM SỐ LÀ donHangUpdateData
         headers: {
-          'Content-Type': 'application/json', // Quan trọng khi gửi dữ liệu JSON
+          'Content-Type': 'application/json',
           ...(token && { Authorization: `Bearer ${token}` })
         }
       });
@@ -76,13 +67,11 @@ const donHangService = {
 
   // 5. Xóa đơn hàng (DELETE)
   deleteDonHang: async (orderId) => {
-    // Thêm xác nhận trước khi xóa, đây là một UX tốt
     if (!window.confirm('Bạn có chắc chắn muốn xóa đơn hàng này? Việc này có thể không khôi phục được.')) {
         throw new Error("Hủy thao tác xóa.");
     }
     try {
         const token = localStorage.getItem('token');
-        // Áp dụng cú pháp giống userService: thêm header có điều kiện
         const response = await axios.delete(`${API_URL}/${orderId}`, {
             headers: {
                 ...(token && { Authorization: `Bearer ${token}` })
